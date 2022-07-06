@@ -37,3 +37,9 @@ Patv    - 유효전력 : 실제로 터빈을 돌리는 일을 하는 전력
 
 (※ Error = 실제 값 - 예측 값)
 ```
+
+
+# 3. Baseline
+1. [TensorFlow baseline](https://dacon.io/competitions/official/235926/codeshare/5220?page=1&dtype=recent)
+2. [PyTorch baseline](https://dacon.io/competitions/official/235926/codeshare/5289?page=1&dtype=recent)
+3. [태양광 발전량 예측 AI 경진대회](https://dacon.io/competitions/official/235680/codeshare/2366?page=1&dtype=recent)
