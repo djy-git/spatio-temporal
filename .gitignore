@@ -141,6 +141,7 @@ dmypy.json
 # data
 input
 data
+info
 
 # tensorboard
 tensorboard
