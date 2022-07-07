@@ -24,6 +24,10 @@ Pab     - 터빈 당 3개의 날이 있으며 각각의 각도가 다름
 Prtv    - 무효전력 : 에너지원을 필요로 하지 않는 전력
 Patv    - 유효전력 : 실제로 터빈을 돌리는 일을 하는 전력
 ```
+[reactive vs active power](https://www.youtube.com/watch?v=rY-mcPmL8u0)
+
+![](http://bj.bcebos.com/v1/ai-studio-match/file/31b165c6dce04593ac7f5deb0606a16fd051867fb08f48b0a9ad5e0bff3538db?authorization=bce-auth-v1%2F0ef6765c1e494918bc0d4c3ca3e5c6d1%2F2022-03-15T15%3A09%3A13Z%2F-1%2F%2Ff41f2106693b19cbc023ac3db2369f1f8ad9d8b8e82a0425b381e80c37b89bdc)
+
 
 # 2. [평가](https://dacon.io/competitions/official/235926/overview/rules)
 ## 2.1 평가 산식 및 평가 규제
@@ -38,8 +42,11 @@ Patv    - 유효전력 : 실제로 터빈을 돌리는 일을 하는 전력
 (※ Error = 실제 값 - 예측 값)
 ```
 
-
 # 3. Baseline
 1. [TensorFlow baseline](https://dacon.io/competitions/official/235926/codeshare/5220?page=1&dtype=recent)
 2. [PyTorch baseline](https://dacon.io/competitions/official/235926/codeshare/5289?page=1&dtype=recent)
 3. [태양광 발전량 예측 AI 경진대회](https://dacon.io/competitions/official/235680/codeshare/2366?page=1&dtype=recent)
+
+
+# 4. EDA
+134개 터빈, 5일 seq_len, 2일 target
