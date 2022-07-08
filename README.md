@@ -178,49 +178,49 @@ $T: \text{절대 온도} $
 # * REFERENCES 주최 측 추천 참고자료 *
 
 [1] 2022. Penmanshiel (United-Kingdom) dataset. https://www.thewindpower.net
-windfarm_en_23147_penmanshiel.php. Online; accessed 06 April 2022.
+windfarm_en_23147_penmanshiel.php. Online; accessed 06 April 2022. \
 [2] 2022. Wind Power Forecasting (Kaggle). https://www.kaggle.com/datasets/
-theforcecoder/wind-power-forecasting. Online; accessed 06 April 2022.
+theforcecoder/wind-power-forecasting. Online; accessed 06 April 2022. \
 [3] Kyunghyun Cho, Bart van Merriënboer, Dzmitry Bahdanau, and Yoshua Bengio. 2014. On the Properties of Neural Machine Translation: Encoder–Decoder Approaches. In Proceedings of SSST-8, Eighth Workshop on Syntax, Semantics and
-Structure in Statistical Translation. 103–111.
+Structure in Statistical Translation. 103–111. \
 [4] Xing Deng, Haijian Shao, Chunlong Hu, Dengbiao Jiang, and Yingtao Jiang. 2020.
 Wind power forecasting methods based on deep learning: A survey. Computer
-Modeling in Engineering and Sciences 122, 1 (2020), 273.
+Modeling in Engineering and Sciences 122, 1 (2020), 273. \
 [5] Aoife M Foley, Paul G Leahy, Antonino Marvuglia, and Eamon J McKeogh. 2012.
-Current methods and advances in forecasting of wind power generation. Renewable energy 37, 1 (2012), 1–8.
+Current methods and advances in forecasting of wind power generation. Renewable energy 37, 1 (2012), 1–8. \
 [6] Ying-Yi Hong and Christian Lian Paulo P Rioflorido. 2019. A hybrid deep learningbased neural network for 24-h ahead wind power forecasting. Applied Energy
-250 (2019), 530–539.
+250 (2019), 530–539. \
 [7] Jun Hu and Wendong Zheng. 2020. Multistage attention network for multivariate
-time series prediction. Neurocomputing 383 (2020), 122–137.
+time series prediction. Neurocomputing 383 (2020), 122–137. \
 [8] Qinghua Hu, Shiguang Zhang, Man Yu, and Zongxia Xie. 2015. Short-term wind
 speed or power forecasting with heteroscedastic support vector regression. IEEE
-Transactions on Sustainable Energy 7, 1 (2015), 241–249.
+Transactions on Sustainable Energy 7, 1 (2015), 241–249. \
 [9] Zhao-Yu Jiang, Qing-Shan Jia, and XH Guan. 2019. A review of multi-temporaland-spatial-scale wind power forecasting method. Acta Automatica Sinica 45, 1
-(2019), 51–71.
+(2019), 51–71. \
 [10] Ting Li, Junbo Zhang, Kainan Bao, Yuxuan Liang, Yexin Li, and Yu Zheng. 2020.
 Autost: Efficient neural architecture search for spatio-temporal prediction. In
 Proceedings of the 26th ACM SIGKDD International Conference on Knowledge
-Discovery & Data Mining. 794–802.
+Discovery & Data Mining. 794–802. \
 [11] Yuxuan Liang, Songyu Ke, Junbo Zhang, Xiuwen Yi, and Yu Zheng. 2018. Geoman:
 Multi-level attention networks for geo-sensory time series prediction.. In IJCAI,
-Vol. 2018. 3428–3434.
+Vol. 2018. 3428–3434. \
 [12] M Milligan, M Schwartz, and Yih-huei Wan. 2003. Statistical wind power forecasting models: Results for US wind farms. Technical Report. National Renewable
-Energy Lab.(NREL), Golden, CO (United States).
+Energy Lab.(NREL), Golden, CO (United States). \
 [13] George Sideratos and Nikos D Hatziargyriou. 2007. An advanced statistical
 method for wind power forecasting. IEEE Transactions on power systems 22, 1
-(2007), 258–265.
+(2007), 258–265. \
 [14] Huai-zhi Wang, Gang-qiang Li, Gui-bin Wang, Jian-chun Peng, Hui Jiang, and
 Yi-tao Liu. 2017. Deep learning based ensemble approach for probabilistic wind
-power forecasting. Applied energy 188 (2017), 56–70.
+power forecasting. Applied energy 188 (2017), 56–70. \
 [15] Xiaochen Wang, Peng Guo, and Xiaobin Huang. 2011. A review of wind power
-forecasting models. Energy procedia 12 (2011), 770–778.
+forecasting models. Energy procedia 12 (2011), 770–778. \
 [16] Haixu Wu, Jiehui Xu, Jianmin Wang, and Mingsheng Long. 2021. Autoformer: Decomposition transformers with auto-correlation for long-term series forecasting.
-Advances in Neural Information Processing Systems 34 (2021).
+Advances in Neural Information Processing Systems 34 (2021). \
 [17] Jianwu Zeng and Wei Qiao. 2011. Support vector machine-based short-term wind
 power forecasting. In 2011 IEEE/PES Power Systems Conference and Exposition.
-IEEE, 1–8.
+IEEE, 1–8. \
 [18] Haoyi Zhou, Shanghang Zhang, Jieqi Peng, Shuai Zhang, Jianxin Li, Hui Xiong,
-and Wancai Zhang. 2021. Informer: Beyond efficient transformer for long sequence time-series forecasting. In Proceedings of AAAI.
+and Wancai Zhang. 2021. Informer: Beyond efficient transformer for long sequence time-series forecasting. In Proceedings of AAAI. \
 [19] Jingbo Zhou and Anthony KH Tung. 2015. Smiler: A semi-lazy time series prediction system for sensors. In Proceedings of the 2015 ACM SIGMOD International
-Conference on Management of Data. 1871–1886.\
+Conference on Management of Data. 1871–1886. \
 
