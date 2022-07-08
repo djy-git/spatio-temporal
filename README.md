@@ -10,7 +10,7 @@
 > 4. 발표 및 시상식: 22. 8. 11. 13:00 ~ 18:00
 
 
-# 1. [데이터 설명](https://dacon.io/competitions/official/235926/talkboard/406431?page=1&dtype=recent)
+# 1. [데이터](https://dacon.io/competitions/official/235926/talkboard/406431?page=1&dtype=recent)
 ```
 TurbID  - 발전기 ID
 Day     - 날짜
@@ -30,6 +30,11 @@ Patv    - 유효전력 : 실제로 터빈을 돌리는 일을 하는 전력
 ## 1.2  Turbine figure
 ![](http://bj.bcebos.com/v1/ai-studio-match/file/31b165c6dce04593ac7f5deb0606a16fd051867fb08f48b0a9ad5e0bff3538db?authorization=bce-auth-v1%2F0ef6765c1e494918bc0d4c3ca3e5c6d1%2F2022-03-15T15%3A09%3A13Z%2F-1%2F%2Ff41f2106693b19cbc023ac3db2369f1f8ad9d8b8e82a0425b381e80c37b89bdc)
 
+## 1.3 Spatial distribution of all wind turbines
+![](assets/1.png)
+[Question about relative spatial coordinate system](https://github.com/PaddlePaddle/PaddleSpatial/discussions/179) \
+→ XY축이 위도/경도를 나타내는 것이 아니라 임의의 변환을 사용해서 나타낸 결과임 \
+→ 터빈의 **방향**과 **상대적인 위치**를 변화시키진 않았음
 
 # 2. [평가](https://dacon.io/competitions/official/235926/overview/rules)
 ## 2.1 평가 산식 및 평가 규제
