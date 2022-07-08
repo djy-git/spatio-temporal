@@ -10,28 +10,86 @@
 > 3. 순위발표: 22. 8. 5. 17:00
 > 4. 발표 및 시상식: 22. 8. 11. 13:00 ~ 18:00
 
+**서버접속 정보**
+>http://165.246.34.147:26042 \
+> pw: baidu2022
 
 # 1. [데이터](https://dacon.io/competitions/official/235926/talkboard/406431?page=1&dtype=recent)
 
 ```
-TurbID  - 발전기 ID
-Day     - 날짜
-Tmstamp - 시간
-Wspd    - 풍속
-Wdir    - 터빈이 바라보는 각도와 실제 바람 방향 각도 차이
-Etmp    - 외부 온도
-Itmp    - 터빈 내부 온도
-Ndir    - 터빈이 바라보는 방향 각도
-Pab     - 터빈 당 3개의 날이 있으며 각각의 각도가 다름
-Prtv    - 무효전력 : 에너지원을 필요로 하지 않는 전력
-Patv    - 유효전력 : 실제로 터빈을 돌리는 일을 하는 전력
+TurbID  - Wind turbine ID, 발전기 ID
+Day     - Day of the record, 날짜
+Tmstamp - Created time of the record, 시간
+Wspd(m/s) - The wind speed recorded by the anemometer, 풍속
+Wdir(°)  - wind direction, 터빈이 바라보는 각도와 실제 바람 방향 각도 차이
+Etmp(℃)  - Temperature of the surounding environment, 외부 온도
+Itmp(℃)  - Temperature inside the turbine nacelle, 터빈 내부 온도
+Ndir(°)  - Nacelle direction, i.e., the yaw angle of the nacelle, 터빈이 바라보는 방향 각도
+Pab(°)   - Pitch angle of blade,터빈 당 3개의 날이 있으며 각각의 각도가 다름
+Prtv(kW) - Reactive power, 무효전력 : 에너지원을 필요로 하지 않는 전력
+Patv(kW) - Active power (target variable), 유효전력 : 실제로 터빈을 돌리는 일을 하는 전력
 ```
 
 ## 1.1 `Prtv` vs `Patv`
 [reactive vs active power](https://www.youtube.com/watch?v=rY-mcPmL8u0)
 
-## 1.2  Turbine figure
+## 1.2 과제 정의
+[wikipedia: wind turbine](https://en.wikipedia.org/wiki/Wind_turbine#Horizontal_axis;%20https://en.wikipedia.org/wiki/Wind_turbine#Components) \
+주최 측의 설명이 없지만 Ndir(nacelle)가 있는 것을 미루어 풍차형 발전기라는점을 알 수 있다.
+![](https://www.pengky.cn/zz-horizontal-axis-turbine/06-nacelle-equipment-and-tower/08-nacelle.jpg)
+Pab가 3개 있는 것으로 날개 3개인 프로펠러형 풍차라는 것을 추측할 수 있다.
 ![](http://bj.bcebos.com/v1/ai-studio-match/file/31b165c6dce04593ac7f5deb0606a16fd051867fb08f48b0a9ad5e0bff3538db?authorization=bce-auth-v1%2F0ef6765c1e494918bc0d4c3ca3e5c6d1%2F2022-03-15T15%3A09%3A13Z%2F-1%2F%2Ff41f2106693b19cbc023ac3db2369f1f8ad9d8b8e82a0425b381e80c37b89bdc)
+본 대회의 풍력발전기는 날개 3개의 프로펠러형 풍차라고 가정한다.
+
+![](https://wikimedia.org/api/rest_v1/media/math/render/svg/67edf3ed1b565ce5e48bb06c0a8d7d07867ed2f3) \
+Power (W) = 1/2 x ρ x A x v3 x C \
+Power = Watts\
+ρ (rho, a Greek letter) = density of the air in kg/m3\
+A = cross-sectional area of the wind in m2\
+v = velocity of the wind in m/s
+C = power coefficient(in ideal condition 16/27, not more than)
+
+생산되는 출력으로 대략적인 터빈의 크기 A 를 가늠해볼 수 있다. 
+공기 밀도는 온도, 기압과 관련이 있는데 다음과 같다. 
+
+###air density fomular 
+
+![](https://wikimedia.org/api/rest_v1/media/math/render/svg/868592a09fa48a504a8096e32ab73b4a78fb1c11) \
+m is the molecular mass of dry air, approximately 4.81×10−26 in kg. \
+Kb is the Boltzmann constant, 1.380649×10−23 in J⋅K−1 \
+p, absolute pressure (Pa) \
+T, absolute temperature (K)
+
+해수면이라고 가정했을때 P = 101325 Pa \
+(4.81×10−26 in kg * 101325 Pa) / (1.380649×10−23 * (temperature in celsius + 273.15)\
+= 353/(temperature in celsius + 273.15) 
+
+Power (W) = 1/2 x 353/(t + 273.15) x A x v^3 x C 
+
+### [터빈 종류 및 스펙](https://en.wind-turbine-models.com/turbines)
+![img.png](img.png)
+**Patv**의 최대값이 대략 1500KW,즉 **1.5MW**라고 볼 수 있다. \
+134개의 터빈이 있으므로 해당 wind farm은 **201MW**급이다. 
+
+134개의 1.5MW 터빈, 201MW급의 wind farm을 검색해보자. \
+[관련 기사](https://www.power-technology.com/marketdata/inner-mongolia-huitengxile-huadian-kulun-china/) \
+**Inner Mongolia** Huitengxile Huadian Kulun is a **201MW** onshore wind power project. 
+owned by Inner Mongolia Huadian Power Huitengxile Wind Power의 소유 \
+The company provided **134 units of [SL1500/82](https://en.wind-turbine-models.com/turbines/1617-sinovel-sl1500-82#powercurve) turbines**, each with **1.5MW nameplate capacity.** \
+[추가 검색 결과](https://www.gem.wiki/Inner_Mongolia_Chayouzhong_Banner_Huitengxile_2_(Huadian)_wind_farm) \
+GPS coordinate (41.7181, 112.6019) \
+[wind farm project design document](https://cdm.unfccc.int/filestorage/J/E/6/JE678CTQ1G92FOLV5HXUDNAIK0ZYMS/PDD%203539.pdf?t=NHN8cmVwMXR6fDBUE_ABl_2cCvtvSW1B--d_) 
+
+조사 결과 내 몽골에 위치한 풍력발전소이고, 중국 Sinovel사의 SL1500/82 [spec page](http://www.sinovel.com/english/content/?106.html) 82.0 m의 지름을 가진 터빈임을 찾았다. 
+![tech spec](http://www.sinovel.com/upLoad/image/20160507/14625982272871351.jpg)
+cut-in 풍속 : 3m/s \
+cut-out 풍속 : 25m/s \
+Rated wind speed: 10.5 m/s \
+![img_1.png](img_1.png)
+
+Wind turbine spacing \
+On most horizontal wind turbine farms, a spacing of about 6–10 times the rotor diameter is often upheld. However, for large wind farms distances of about 15 rotor diameters should be more economical, taking into account typical wind turbine and land costs. 
+
 
 ## 1.3 Spatial distribution of all wind turbines
 ![](assets/1.png)
