@@ -105,7 +105,7 @@ Patv    - 유효전력 : 실제로 터빈을 돌리는 일을 하는 전력
 
 # 5. 참고자료
 
-1. [Efficiency of Wind turbine](https://en.wikipedia.org/wiki/Wind_turbine#Efficiency)
+1. [Efficiency of Wind turbine](https://en.wikipedia.org/wiki/Wind_turbine#Efficiency) \
    $$
    P \propto \rho v^3 A \\
    \rho \propto \frac{p}{T} \\
