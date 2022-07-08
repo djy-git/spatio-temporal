@@ -36,6 +36,28 @@ Patv    - 유효전력 : 실제로 터빈을 돌리는 일을 하는 전력
 → XY축이 위도/경도를 나타내는 것이 아니라 임의의 변환을 사용해서 나타낸 결과임 \
 → 터빈의 **방향**과 **상대적인 위치**를 변화시키진 않았음
 
+## 1.4 Caveats about the data
+1. **Zero values**
+   ```
+   Prtv = 0 if Prtv < 0
+   Patv = 0 if Patv < 0
+   ```
+2. **Missing values**
+   ```
+   |Patv[t] - Patv'[t]| = 0 if missing values are in features or target
+   ```
+3. **Unknown values**
+   ```
+   |Patv[t] - Patv'[t]| = 0 if Patv ≤ 0 and Wspd > 2.5
+   |Patv[t] - Patv'[t]| = 0 if Pab1 > 89 or Pab2 > 89 or Pab3 > 89
+   ```
+4. **Abnormal values**
+   ```
+   |Patv[t] - Patv'[t]| = 0 if Ndir ⊈ [-720, 720]
+   |Patv[t] - Patv'[t]| = 0 if Wdir ⊈ [-180, 180]
+   ```
+
+
 # 2. [평가](https://dacon.io/competitions/official/235926/overview/rules)
 ## 2.1 평가 산식 및 평가 규제
 ![](https://dacon.s3.ap-northeast-2.amazonaws.com/competition/235926/editor-image/1656482296560399.jpeg)
