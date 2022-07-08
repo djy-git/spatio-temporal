@@ -103,16 +103,17 @@ Patv    - 유효전력 : 실제로 터빈을 돌리는 일을 하는 전력
 
 # 5. 참고자료
 1. [Efficiency of Wind turbine](https://en.wikipedia.org/wiki/Wind_turbine#Efficiency) \
-   $$ P \propto \rho v^3 A $$
-   $$ \rho \propto \frac{p}{T} $$
+   $ P \propto \rho v^3 A $
+   $ \rho \propto \frac{p}{T} $
    <br>
-   $$ P: \text{최대 파워 출력} $$
-   $$ \rho: \text{공기 밀도} $$
-   $$A: \text{디스크의 유효 영역} $$
-   $$p: \text{절대 압력(진공도 100\% 완전진공을 기준으로 측정한 압력)} $$
-   $$T: \text{절대 온도} $$
+   $ P: \text{최대 파워 출력} $
+   $ \rho: \text{공기 밀도} $
+   $A: \text{디스크의 유효 영역} $
+   $p: \text{절대 압력(완전진공을 기준으로 측정한 압력)} $
+   $T: \text{절대 온도} $
    <br>
-   **기상(특히 풍속)**이 효율에 큰 영향을 미치며, 안정적이고 일정한 기상 조건은 불안정한 기상 조건에 비해 평균적으로 15% 더 높은 효율을 낼 수 있다.   
+
+   **기상(특히 풍속)** 이 효율에 큰 영향을 미치며, 안정적이고 일정한 기상 조건은 불안정한 기상 조건에 비해 평균적으로 15% 더 높은 효율을 낼 수 있다.   
 
 
 # * REFERENCES 주최 측 추천 참고자료 *
