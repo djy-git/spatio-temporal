@@ -67,7 +67,7 @@ T, absolute temperature (K)
 Power (W) = 1/2 x 353/(t + 273.15) x A x v^3 x C 
 
 ### [터빈 종류 및 스펙](https://en.wind-turbine-models.com/turbines)
-![img.png](assets\patvMax.png)
+![patvMax.png](assets\patvMax.png)
 **Patv**의 최대값이 대략 1500KW,즉 **1.5MW**라고 볼 수 있다. \
 134개의 터빈이 있으므로 해당 wind farm은 **201MW**급이다. 
 
@@ -85,7 +85,7 @@ GPS coordinate (41.7181, 112.6019) \
 cut-in 풍속 : 3m/s \
 cut-out 풍속 : 25m/s \
 Rated wind speed: 10.5 m/s \
-![img_1.png](assets\powercurve.png)
+![powercurve.png](assets\powercurve.png)
 
 Wind turbine spacing \
 On most horizontal wind turbine farms, a spacing of about 6–10 times the rotor diameter is often upheld. However, for large wind farms distances of about 15 rotor diameters should be more economical, taking into account typical wind turbine and land costs. 
