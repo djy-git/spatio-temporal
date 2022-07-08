@@ -93,6 +93,14 @@ Patv    - 유효전력 : 실제로 터빈을 돌리는 일을 하는 전력
 7. `Prtv`: 실제 사용 전력
 8. `Pab`와 `Patv`의 관계 탐색
 
+
+
+# 5. 참고자료
+1. [Efficiency of Wind turbine](https://en.wikipedia.org/wiki/Wind_turbine#Efficiency) \
+$P 	\propto $
+
+
+
 # * REFERENCES 주최 측 추천 참고자료 *
 
 [1] 2022. Penmanshiel (United-Kingdom) dataset. https://www.thewindpower.net
