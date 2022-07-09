@@ -87,6 +87,14 @@ cut-out 풍속 : 25m/s \
 Rated wind speed: 10.5 m/s \
 ![](assets/powercurve.png)
 
+후보 2. 
+[longyuan](https://www.power-technology.com/marketdata/inner-mongolia-baotou-bayin-wind-farm-china/)
+[report](https://www1.hkexnews.hk/listedco/listconews/sehk/2009/1127/00916/ewplongy-20091120-24.pdf)
+[project report](https://cdm.unfccc.int/filestorage/Y/L/X/YLXDH8W92UC1QZATBVK50OEF346GI7/pdd.pdf?t=WE98cmVwa3lzfDBpHDUyC4ZBKeKpdQH7RcBp)
+
+
+[다른 후보](https://www.deif.com/wind-power/cases/retrofit-md77-for-dongfang/)
+[3번 Minensota](https://mn.gov/eera/web/project-file/11688/))
 Wind turbine spacing \
 On most horizontal wind turbine farms, a spacing of about 6–10 times the rotor diameter is often upheld. However, for large wind farms distances of about 15 rotor diameters should be more economical, taking into account typical wind turbine and land costs. 
 
