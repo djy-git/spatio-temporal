@@ -170,11 +170,16 @@ def turbine_scores(pred, gt, raw_data, examine_len, stride=1):
     maes, rmses = [], []
     cnt_sample, out_seq_len, _ = pred.shape
     cnt_sample = out_seq_len
-    for i in range(0, cnt_sample, stride):
-        indices = np.where(~cond[i:out_seq_len + i])
-        prediction = pred[0][i:]
+    for i in range(1, cnt_sample, stride):
+        # indices = np.where(~cond[i:out_seq_len + i])
+        indices = np.where(~cond[:i])
+        # prediction = pred[0][i:]
+        # prediction = prediction[indices]
+        # targets = gt[0][i:]
+        # targets = targets[indices]
+        prediction = pred[0][:i]
         prediction = prediction[indices]
-        targets = gt[0][i:]
+        targets = gt[0][:i]
         targets = targets[indices]
         _mae, _rmse = regressor_scores(prediction[-examine_len:] / 1000, targets[-examine_len:] / 1000)
         if _mae != _mae or _rmse != _rmse:

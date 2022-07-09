@@ -9,13 +9,14 @@ Description: Evaluate the performance
 Authors: Lu,Xinjiang (luxinjiang@baidu.com)
 Date:    2022/03/10
 """
-import os
-import sys
-import time
-import traceback
-import numpy as np
+# import os
+# import sys
+# import time
+# import traceback
+# import numpy as np
 import metrics
 from ydj.util import *
+import argparse
 
 def evaluate(settings):
     # type: (dict) -> float
@@ -32,7 +33,7 @@ def evaluate(settings):
     raw_data_lst = []
 
     common_cols = ['TurbID', 'Day', 'Tmstamp']
-    prediction_df = pd.read_csv(join(PATH.output, 'proposed1.csv'))
+    prediction_df = pd.read_csv(join(PATH.output, settings['filename']))
     ground_df = pd.read_csv(PATH.target)[common_cols + ['Patv']].rename(columns={'Patv': 'Patv_target'})
     raw_data_df = pd.read_csv(PATH.target)
 
@@ -45,10 +46,10 @@ def evaluate(settings):
         grounds.append(ground)
         raw_data_lst.append(raw_data)
 
-    start_forecast_time = time.time()
-
+    # start_forecast_time = time.time()
+    #
     # predictions, grounds, raw_data_lst = forecast_module.forecast(settings)
-    end_forecast_time = time.time()
+    # end_forecast_time = time.time()
     # if settings["is_debug"]:
     #     print("\nElapsed time for prediction is: {} secs\n".format(end_forecast_time - start_forecast_time))
 
@@ -88,19 +89,28 @@ def evaluate(settings):
 if __name__ == "__main__":
     # Set up the initial environment
     # Current settings for the model
-
+    parser = argparse.ArgumentParser(description='Long Term Wind Power Forecasting')
+    ###
+    parser.add_argument('--filename', type=str, default='baseline1.csv',
+                        help='Filename of the input data, change it if necessary')
+    parser.add_argument('--output_len', type=int, default=288, help='The length of predicted sequence')
+    parser.add_argument('--day_len', type=int, default=144, help='Number of observations in one day')
+    parser.add_argument('--capacity', type=int, default=134, help="The capacity of a wind farm, "
+                                                                  "i.e. the number of wind turbines in a wind farm")
+    parser.add_argument('--stride', type=int, default=1, help='The stride that a window adopts to roll the test set')
+    args = parser.parse_args()
     settings = {
         # "data_path": args.data_path,
-        # "filename": args.filename,
+        "filename": args.filename,
         # "task": args.task,
         # "target": args.target,
         # "checkpoints": args.checkpoints,
         # "input_len": args.input_len,
-        "output_len": 288,
+        "output_len": args.output_len,
         # "start_col": args.start_col,
         # "in_var": args.in_var,
         # "out_var": args.out_var,
-        "day_len": 144,
+        "day_len": args.day_len,
         # "train_size": args.train_size,
         # "val_size": args.val_size,
         # "test_size": args.test_size,
@@ -119,5 +129,7 @@ if __name__ == "__main__":
         "stride": 1
         # "is_debug": args.is_debug
     }
+    print('\n File Name : \n\t{}\n'.format(args.filename))
+
     score = evaluate(settings)
     print('\n --- Overall Score --- \n\t{}'.format(score))
