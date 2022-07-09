@@ -166,21 +166,34 @@ def turbine_scores(pred, gt, raw_data, examine_len, stride=1):
     """
     cond = (raw_data['Patv'] <= 0) & (raw_data['Wspd'] > 2.5) | \
            (raw_data['Pab1'] > 89) | (raw_data['Pab2'] > 89) | (raw_data['Pab3'] > 89) | \
-           (raw_data['Wdir'] < -180) | (raw_data['Wdir'] > 180) | (raw_data['Ndir'] < -720) | (raw_data['Ndir'] > 720)
+           (raw_data['Wdir'] < -180) | (raw_data['Wdir'] > 180) | (raw_data['Ndir'] < -720) | (raw_data['Ndir'] > 720) | \
+           (raw_data['Patv'].isnull())
     maes, rmses = [], []
     cnt_sample, out_seq_len, _ = pred.shape
     cnt_sample = out_seq_len
-    for i in range(1, cnt_sample, stride):
+    for i in range(1, cnt_sample+1, stride):
         # indices = np.where(~cond[i:out_seq_len + i])
-        indices = np.where(~cond[:i])
+
+        # roll window size from 288 to 0,
+        # indices = np.where(~cond[i:])
+        # abnormal_indices = np.where(cond[i:])
         # prediction = pred[0][i:]
-        # prediction = prediction[indices]
         # targets = gt[0][i:]
-        # targets = targets[indices]
+
+        # roll window size from 0 to 288,
+        indices = np.where(~cond[:i])
+        abnormal_indices = np.where(cond[:i])
         prediction = pred[0][:i]
-        prediction = prediction[indices]
         targets = gt[0][:i]
+
+        # drop all abnormal indices
+        prediction = prediction[indices]
         targets = targets[indices]
+
+        # not drop but error to 0
+        # prediction[abnormal_indices] = 0
+        # targets[abnormal_indices] = 0
+
         _mae, _rmse = regressor_scores(prediction[-examine_len:] / 1000, targets[-examine_len:] / 1000)
         if _mae != _mae or _rmse != _rmse:
             continue
