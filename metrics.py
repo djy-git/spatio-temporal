@@ -204,7 +204,7 @@ def turbine_scores(pred, gt, raw_data, examine_len, stride=1):
     return avg_mae, avg_rmse
 
 
-def regressor_detailed_scores(predictions, gts, raw_df_lst, settings):
+def regressor_detailed_scores(predictions, gts, raw_df_lst):
     """
     Desc:
         Some common metrics for regression problems
@@ -216,13 +216,16 @@ def regressor_detailed_scores(predictions, gts, raw_df_lst, settings):
     Returns:
         A tuple of metrics
     """
+    capacity = 134
+    output_len = 288
+    stride = 1
     # start_time = time.time()
     all_mae, all_rmse = [], []
-    for i in range(settings["capacity"]):
+    for i in range(capacity):
         prediction = predictions[i]
         gt = gts[i]
         raw_df = raw_df_lst[i]
-        _mae, _rmse = turbine_scores(prediction, gt, raw_df, settings["output_len"], settings["stride"])
+        _mae, _rmse = turbine_scores(prediction, gt, raw_df, output_len, stride)
         # if settings["is_debug"]:
         #     end_time = time.time()
         #     print("\nSpent time for evaluating the {}-th turbine is {} secs\n".format(i, end_time - start_time))
