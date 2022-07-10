@@ -1,15 +1,4 @@
-import os
-from os.path import join, dirname, abspath
-import sys
-
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import missingno as msno
-from tabulate import tabulate
-
-from tqdm import tqdm
+from env import *
 
 
 class PATH:
@@ -17,9 +6,6 @@ class PATH:
     input  = join(root, 'data')
     output = join(root, 'output')
     target = join(root, 'info', 'target.csv')
-
-def impute(data):
-    return data.dropna()
 
 def convert_dtypes(data):
     int_cols   = ['TurbID', 'Day']
@@ -32,3 +18,4 @@ def convert_category(data):
     cat_cols = ['TurbID', 'Day']
     data[cat_cols] = data[cat_cols].astype('category')
     return data
+
