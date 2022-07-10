@@ -149,6 +149,7 @@ On most horizontal wind turbine farms, a spacing of about 6–10 times the rotor
 2. [PyTorch baseline](https://dacon.io/competitions/official/235926/codeshare/5289?page=1&dtype=recent)
 3. [태양광 발전량 예측 AI 경진대회](https://dacon.io/competitions/official/235680/codeshare/2366?page=1&dtype=recent)
    - 다양한 모델에 대한 linear blending ensemble
+4. [Predict Wind Power Output (Kaggle)](https://www.kaggle.com/code/javiermartnz/predict-wind-power-output)
 
 # 4. 참고자료
 ## 4.1 [Efficiency of Wind turbine](https://en.wikipedia.org/wiki/Wind_turbine#Efficiency)
