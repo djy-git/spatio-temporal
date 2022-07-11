@@ -23,6 +23,28 @@ def make_train_data(data, seq_len, n_train):
             train_y.append(label_tmp)  # (288)     = (Tmstamp * days)
     train_x, train_y = np.array(train_x, dtype=np.float32), np.array(train_y, dtype=np.float32)
     return train_x, train_y
+
+# 위에 것과 교체 대기, 수정 가능
+def make_train_data_10min(data, seq_len):
+    train_x, train_y = [], []
+    for i in tqdm(sorted(pd.unique(data["TurbID"]))):
+        tmp_data = data[data["TurbID"] == i]
+        train_x, train_y = [], []
+        window_offset = 0
+        window_interval = 1 # 1 : 10min, 6 : 60min
+        train_window_size = 144 * seq_len
+        label_window_size = 144 * 2
+        while (window_offset + train_window_size + label_window_size <= len(tmp_data)):
+            train_tmp = tmp_data[window_offset:
+                                 window_offset + train_window_size].drop(columns=['TurbID', 'Day'])
+            label_tmp = tmp_data[window_offset + train_window_size:
+                                 window_offset + train_window_size + label_window_size].Patv
+            window_offset += window_interval
+            train_x.append(train_tmp)
+            train_y.append(label_tmp)
+    train_x, train_y = np.array(train_x, dtype=np.float32), np.array(train_y, dtype=np.float32)
+    return train_x, train_y
+
 def make_val_data(data, seq_len):
     train_days = np.arange(198-seq_len+1, 199)
     label_days = np.arange(199, 201)
