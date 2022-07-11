@@ -44,7 +44,7 @@
     ![](assets/missing_values(2).jpg)
 3. `Tmstamp=00:00`에서도 missing value가 자주 나타난다. (**41240개** rows) \
 `Days`를 처리하고 난 다음엔 **9070개** rows가 missing value로 남아있다.
-   ![](assets/Tmstamp별 Patv.png)
+    ![](assets/Tmstamp별Patv.png)
 
 
 ---
