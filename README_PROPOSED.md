@@ -103,14 +103,20 @@ Accuracy:  40.8675%
 ## Data
 - `TurbID` 별로 model을 생성
 
+## Training
+- `batch_size=32`
+
 ```
  File Name : 
 	proposed4.csv
 
-Accuracy:  54.3031%
+Accuracy:  53.8061%
 
- 	 RMSE: 34.0816873234851, MAE: 30.090377192844116
+ 	 RMSE: 29.735404515681957, MAE: 24.527271051411567
 
  --- Overall Score --- 
-	32.08603225816461
+	27.131337783546762
 ```
+
+---
+
