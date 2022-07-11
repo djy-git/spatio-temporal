@@ -1,4 +1,4 @@
-# 1. [baseline1.ipynb](baseline1.ipynb): 22
+# 1. [baseline1.ipynb](proposed/baseline1.ipynb)
 ## Data
 - Train data: 5일
 - Test data: 2일
@@ -21,11 +21,10 @@ Accuracy:  47.1944%
 
  --- Overall Score --- 
 	23.41281773499677
-
 ```
 
 
-# 2. [proposed1.py](proposed1.py)
+# 2. [proposed1.py](proposed/proposed1.py)
 [baseline1](#1.-baseline1.ipynb)에서 다음을 추가
 
 ## Training
@@ -46,7 +45,7 @@ Accuracy:  56.0075%
 ```
 
 
-# 3. [proposed2.py](proposed2.py)
+# 3. [proposed2.py](proposed/proposed2.py)
 [proposed1](#2.-proposed1.ipynb)에서 다음을 추가
 
 ## Data
