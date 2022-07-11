@@ -97,7 +97,20 @@ Accuracy:  40.8675%
 ```
 
 
-# 4. [proposed4.ipynb](proposed/proposed4.ipynb)
+# 5. [proposed4.ipynb](proposed/proposed4.ipynb)
 **proposed2** 에서 다음을 추가
 
 ## Data
+- `TurbID` 별로 model을 생성
+
+```
+ File Name : 
+	proposed4.csv
+
+Accuracy:  54.3031%
+
+ 	 RMSE: 34.0816873234851, MAE: 30.090377192844116
+
+ --- Overall Score --- 
+	32.08603225816461
+```
