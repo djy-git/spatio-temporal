@@ -1,4 +1,4 @@
-from env import *
+from ydj.env import *
 
 
 class PATH:
