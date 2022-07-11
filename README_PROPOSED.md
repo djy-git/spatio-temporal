@@ -118,5 +118,34 @@ Accuracy:  53.8061%
 	27.131337783546762
 ```
 
+
+# 5. [proposed5.ipynb](proposed/proposed5.ipynb)
+**proposed2** 에서 다음을 추가
+
+## Data
+- Missing value 처리
+  - `Day=65, 66, 67` 제거
+  - `Day=1, Tmstamp=00:00` 
+  - 나머지는 interpolation 사용하여 채우기
+  - e.g. `... → [(58, 59, 60, 61, 62), (63, 64)] → [(68, 69, 70, 71, 72), (73, 74)] → ...`
+
+
+```
+ File Name : 
+	proposed5.csv
+
+Accuracy:  50.4010%
+
+ 	 RMSE: 25.910936738551044, MAE: 19.427390262693685
+
+ --- Overall Score --- 
+	22.669163500622364
+```
+
 ---
 
+# 6. [proposed6.ipynb](proposed/proposed6.ipynb)
+**proposed5** 에서 다음을 추가
+
+## Data
+- `Day` 대신 `Tmstamp` 단위로 데이터 분할
