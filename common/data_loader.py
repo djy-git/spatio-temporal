@@ -4,12 +4,16 @@ from tqdm import tqdm
 import tensorflow as tf
 
 
-def make_train_data(data, seq_len):
+def make_train_data(data, seq_len, n_train):
+    """
+    Last training set: [n_train-2-seq_len:n_train-2]
+    Last test set    : [n_train-2:n_train]
+    """
     train_x, train_y = [], []
     for i in tqdm(sorted(pd.unique(data["TurbID"]))):
         tmp_data = data[data["TurbID"] == i]
-        for j in range(1, 199 - seq_len):
-            # train data ==> 5일 단위
+        for j in range(1, (n_train-2) - (seq_len-1) + 1):  # 2일 test
+            # train data ==> seq_len일 단위
             # label data ==> 2일 단위
             train_days = np.arange(j, j+seq_len)
             label_days = np.arange(j+seq_len, j+seq_len+2)
