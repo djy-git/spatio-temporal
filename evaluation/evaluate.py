@@ -94,7 +94,7 @@ def evaluate(prediction_df):
 
 
 if __name__ == '__main__':
-    filename = 'baseline1.csv'
+    filename = 'proposed1.csv'
 
     prediction_df = pd.read_csv(join(PATH.output, filename))
     print('\n File Name : \n\t{}\n'.format(filename))

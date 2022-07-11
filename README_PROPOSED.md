@@ -15,60 +15,39 @@
  File Name : 
 	baseline1.csv
 
-Accuracy:  47.1944%
+Accuracy:  46.7085%
 
- 	 RMSE: 26.986341898329115, MAE: 19.839293571664427
-
- --- Overall Score --- 
-	23.41281773499677
-```
-
-
-# 2. [proposed1.py](proposed/proposed1.py)
-[baseline1](#1.-baseline1.ipynb)에서 다음을 추가
-
-## Training
-- Validation set 추가
-- Early stopping 추가
-
-```
- File Name : 
-	proposed1.csv
-
-Accuracy:  56.0075%
-
- 	 RMSE: 25.560458459417383, MAE: 19.265550548203443
+ 	 RMSE: 26.80773266298162, MAE: 19.66573268982056
 
  --- Overall Score --- 
-	22.413004503810413
-
+	23.23673267640109
 ```
 
 
-# 3. [proposed2.py](proposed/proposed2.py)
-[proposed1](#2.-proposed1.ipynb)에서 다음을 추가
+# 2. [proposed1.ipynb](proposed/proposed1.ipynb)
+**baseline1** 에서 다음을 추가
 
 ## Data
 - `StandardScaler` 적용
 
 ```
  File Name : 
-	proposed2.csv
+	proposed1.csv
 
-Accuracy:  48.4391%
+Accuracy:  47.1609%
 
- 	 RMSE: 27.502376249563028, MAE: 21.10862041048538
+ 	 RMSE: 50.91567351662873, MAE: 46.670559504018996
 
  --- Overall Score --- 
-	24.305498330024204
+	48.79311651032386
 ```
-
 
 ---
 
+# 3. [proposed2.ipynb](proposed/proposed2.ipynb)
+**baseline1** 에서 다음을 추가
 
-# 4. [proposed3.py](proposed3.py)
-[baseline3](#3.-proposed2.ipynb)에서 다음을 추가
+## Training
+- Validation set 추가
+- Early stopping 추가
 
-## Modeling
-각 `TurbID`별로 model을 생성
