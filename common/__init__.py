@@ -5,6 +5,7 @@ Examples
 """
 
 
+from .config import *
+from .data_loader import *
 from .env import *
 from .util import *
-from .data_loader import *
