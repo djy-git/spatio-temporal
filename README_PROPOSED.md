@@ -176,7 +176,7 @@ Accuracy:  55.3906%
 ```
 
 
-# 7. [proposed7.ipynb](proposed/proposed5.ipynb)
+# 7. [proposed7.ipynb](proposed/proposed7.ipynb)
 **proposed5** 에서 다음을 추가
 
 ## Data
@@ -196,4 +196,47 @@ Accuracy:  52.8691%
 
  --- Overall Score --- 
 	23.737024366677026
+```
+
+
+# 8. [proposed8.ipynb](proposed/proposed8.ipynb)
+**proposed7** 에서 다음을 추가
+
+## Data
+- Feature engineering 추가 (proposed6 보다 개선)
+
+![](assets/proposed8_result.png)
+
+```
+ File Name : 
+	proposed8.csv
+
+Accuracy:  32.0247%
+
+ 	 RMSE: 34.68416953844638, MAE: 27.361807267416847
+
+ --- Overall Score --- 
+	31.022988402931617
+```
+
+
+# 9. [proposed9.ipynb](proposed/proposed9.ipynb)
+**proposed8** 에서 다음을 추가
+
+## Data
+- `Patv`만 사용하여 예측
+
+![](assets/proposed9_result.png)
+
+
+```
+ File Name : 
+	proposed9.csv
+
+Accuracy:  49.4525%
+
+ 	 RMSE: 28.70997457789587, MAE: 22.651805544984676
+
+ --- Overall Score --- 
+	25.680890061440273
 ```
