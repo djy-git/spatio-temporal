@@ -142,7 +142,6 @@ Accuracy:  50.4010%
 	22.669163500622364
 ```
 
----
 
 # 6. [proposed6.ipynb](proposed/proposed6.ipynb)
 **proposed5** 에서 다음을 추가
@@ -174,4 +173,27 @@ Accuracy:  55.3906%
 
  --- Overall Score --- 
 	23.400198303120494
+```
+
+
+# 7. [proposed7.ipynb](proposed/proposed5.ipynb)
+**proposed5** 에서 다음을 추가
+
+## Data
+- Validation set을 여러 개로 사용 (Training set과 겹치는 부분 있음)
+
+
+![](assets/proposed7_validation_turbine1.png)
+- `Patv=0`인 부분을 잘 다듬어야 한다.
+
+```
+ File Name : 
+	proposed7.csv
+
+Accuracy:  52.8691%
+
+ 	 RMSE: 26.707425563416784, MAE: 20.76662316993727
+
+ --- Overall Score --- 
+	23.737024366677026
 ```
