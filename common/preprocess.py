@@ -23,7 +23,7 @@ def preprocess(data):
 
     # Wind absolute direction adjusted Wdir + Ndir
     temp['Wdir_adj'] = temp['Wdir'] + temp['Ndir']
-    temp['Wdir_cin'] = np.cos(temp['Wdir_adj']/180*np.pi)
+    temp['Wdir_cos'] = np.cos(temp['Wdir_adj']/180*np.pi)
     temp['Wdir_sin'] = np.sin(temp['Wdir_adj']/180*np.pi)
 
     # Nacelle Direction cosine sine
