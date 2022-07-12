@@ -19,7 +19,7 @@ Accuracy:  46.7085%
 
  	 RMSE: 26.80773266298162, MAE: 19.66573268982056
 
- --- Overall Score --- 
+ --- Overall Score --- 3
 	23.23673267640109
 ```
 
@@ -148,14 +148,30 @@ Accuracy:  50.4010%
 **proposed5** 에서 다음을 추가
 
 ## Data
-- `Day` 대신 `Tmstamp` 단위로 데이터 분할
+- `Wspd_cos`, `TSR1, 2, 3`, `Bspd1, 2, 3`, `rpm` 추가 
+```
+train_data['Wspd_cos'] = train_data['Wspd']*np.cos(train_data['Wdir']/180*np.pi)
 
+alpha = 20
+train_data['TSR1'] = 1/np.tan(np.radians(train_data['Pab1']+alpha))
+train_data['TSR2'] = 1 / np.tan(np.radians(train_data['Pab2'] + alpha))
+train_data['TSR3'] = 1 / np.tan(np.radians(train_data['Pab3'] + alpha))    
 
----
+train_data['Bspd1'] = train_data['TSR1'] * train_data['Wspd_cos']
+train_data['Bspd2'] = train_data['TSR2'] * train_data['Wspd_cos']
+train_data['Bspd3'] = train_data['TSR3'] * train_data['Wspd_cos']
 
-1. 기존의 잘 나왔던 연구들이나 코드들을 보고 따라하기
-   - Data
-   - Model
-3. Normalization features
-4. 학습이 잘 안 된다.
-   - 
+train_data['rpm'] = (train_data['Bspd1'] + train_data['Bspd2'] + train_data['Bspd3']) / 3
+```
+
+```
+ File Name : 
+	proposed6.csv
+
+Accuracy:  55.3906%
+
+ 	 RMSE: 26.382792118773786, MAE: 20.4176044874672
+
+ --- Overall Score --- 
+	23.400198303120494
+```
