@@ -50,7 +50,7 @@ def preprocess(data):
 
     # TSR(Tip speed Ratio)
     alpha = 20
-    temp['TSR1'] = 1/np.tan(np.radians(temp['Pab1']+alpha))
+    temp['TSR1'] = 1 / np.tan(np.radians(temp['Pab1']+alpha))
     temp['TSR2'] = 1 / np.tan(np.radians(temp['Pab2'] + alpha))
     temp['TSR3'] = 1 / np.tan(np.radians(temp['Pab3'] + alpha))
     temp['Bspd1'] = temp['TSR1'] * temp['Wspd_cos']
@@ -66,31 +66,38 @@ def preprocess(data):
     temp['P_max'] = ((temp['Wspd'])**3)/temp['Etmp_abs']
 
 
-    ## add 3day & 5day mean value for target according to Hour
-    ## average TARGET values of the most recent 3, 5 days
-    temp['shft1'] = temp['Patv'].shift(144)
-    temp['shft2'] = temp['Patv'].shift(144 * 2)
-    temp['shft3'] = temp['Patv'].shift(144 * 3)
-    temp['shft4'] = temp['Patv'].shift(144 * 4)
+    # ## add 3day & 5day mean value for target according to Hour
+    # ## average TARGET values of the most recent 3, 5 days
+    # temp['shft1'] = temp['Patv'].shift(144)
+    # temp['shft2'] = temp['Patv'].shift(144 * 2)
+    # temp['shft3'] = temp['Patv'].shift(144 * 3)
+    # temp['shft4'] = temp['Patv'].shift(144 * 4)
+    #
+    # temp['avg3'] = np.mean(temp[['Patv', 'shft1', 'shft2']].values, axis=-1)
+    # temp['avg5'] = np.mean(temp[['Patv', 'shft1', 'shft2', 'shft3','shft4']].values, axis=-1)
+    # temp.drop(['shft1','shft2','shft3','shft4'], axis=1, inplace=True)
+    #
+    # temp['Patv1'] = temp['Patv'].shift(-144)
+    # temp['Patv2'] = temp['Patv'].shift(-144 * 2)
 
-    temp['avg3'] = np.mean(temp[['Patv', 'shft1', 'shft2']].values, axis=-1)
-    temp['avg5'] = np.mean(temp[['Patv', 'shft1', 'shft2', 'shft3','shft4']].values, axis=-1)
-    temp.drop(['shft1','shft2','shft3','shft4'], axis=1, inplace=True)
-
-    temp['Patv1'] = temp['Patv'].shift(-144)
-    temp['Patv2'] = temp['Patv'].shift(-144 * 2)
-
-    temp = temp.dropna()
+    # temp = temp.dropna()
     return temp
 
 
 def generate_full_timestamp(data, drop=False):
     data = data.copy()
+
+    # Tmstamp: Timestamp in a day
+    tms_list = list(pd.unique(data['Tmstamp']))
+    data['Tmstamp'] = data['Tmstamp'].apply(lambda x: tms_list.index(x) + 1)
+
     for i in data['TurbID'].unique():
         data_tid = data[data['TurbID'] == i]
         if pd.Series(zip(data_tid['Day'], data_tid['Tmstamp'])).is_monotonic_increasing:  # check if sorted
             data.loc[data['TurbID'] == i, 'Time'] = range(1, len(data_tid) + 1)
+
+    # Time: Not duplicated timestamp
+    data['Time'] = data['Time'].astype(np.int32)
     if drop:
         data = data.drop(columns=['Day', 'Tmstamp'])
-    data['Time'] = data['Time'].astype(np.int32)
     return data
