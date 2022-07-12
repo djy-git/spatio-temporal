@@ -240,3 +240,23 @@ Accuracy:  49.4525%
  --- Overall Score --- 
 	25.680890061440273
 ```
+
+
+# 10. [proposed10.ipynb](proposed/proposed10.ipynb)
+**proposed7** 에서 다음을 추가
+
+## Model
+`f: X_{1:t-s}, y_{1:t-s} → X_{t-s+1:t}, y_{t-s+1:t}`
+
+
+```
+ File Name : 
+	proposed10.csv
+
+Accuracy:  62.8850%
+
+ 	 RMSE: 47.01281746268941, MAE: 44.8693864877889
+
+ --- Overall Score --- 
+	45.94110197523916
+```

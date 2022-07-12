@@ -22,14 +22,14 @@ def preprocess(data):
     temp['X'] = temp['TurbID'].apply(lambda x: location_dict[x]['x'])
     temp['Y'] = temp['TurbID'].apply(lambda y: location_dict[y]['y'])
 
-    ## add cyclical encoded time feature
-    temp.Tmstamp =temp.Tmstamp.apply(lambda x: int(x.split(':')[0]) + int(x.split(':')[1]) / 60)
-    temp['Time_cos'] = np.cos(2 * np.pi * (temp.Tmstamp / 24))
-    temp['Time_sin'] = np.sin(2 * np.pi * (temp.Tmstamp / 24))
-    
-    ## add cyclical encoded time feature
-    temp['Day_cos'] = np.cos(2 * np.pi * (temp.Day / 365))
-    temp['Day_sin'] = np.sin(2 * np.pi * (temp.Day / 365))
+    # ## add cyclical encoded time feature
+    # temp.Tmstamp = temp.Tmstamp.apply(lambda x: int(x.split(':')[0]) + int(x.split(':')[1]) / 60)
+    # temp['Time_cos'] = np.cos(2 * np.pi * (temp.Tmstamp / 24))
+    # temp['Time_sin'] = np.sin(2 * np.pi * (temp.Tmstamp / 24))
+    #
+    # ## add cyclical encoded time feature
+    # temp['Day_cos'] = np.cos(2 * np.pi * (temp.Day / 365))
+    # temp['Day_sin'] = np.sin(2 * np.pi * (temp.Day / 365))
 
     # celsius to kelvin
     c = 243.15
@@ -37,12 +37,12 @@ def preprocess(data):
 
     # Wind absolute direction adjusted Wdir + Ndir
     temp['Wdir_adj'] = temp['Wdir'] + temp['Ndir']
-    temp['Wdir_cos'] = np.cos(temp['Wdir_adj']/180*np.pi)
-    temp['Wdir_sin'] = np.sin(temp['Wdir_adj']/180*np.pi)
-
-    # Nacelle Direction cosine sine
-    temp['Ndir_cos'] = np.cos(temp['Ndir']/180*np.pi)
-    temp['Ndir_sin'] = np.sin(temp['Ndir']/180*np.pi)
+    # temp['Wdir_cos'] = np.cos(temp['Wdir_adj']/180*np.pi)
+    # temp['Wdir_sin'] = np.sin(temp['Wdir_adj']/180*np.pi)
+    #
+    # # Nacelle Direction cosine sine
+    # temp['Ndir_cos'] = np.cos(temp['Ndir']/180*np.pi)
+    # temp['Ndir_sin'] = np.sin(temp['Ndir']/180*np.pi)
 
     # Wind speed cosine, sine
     temp['Wspd_cos'] = temp['Wspd']*np.cos(temp['Wdir']/180*np.pi)
@@ -50,7 +50,7 @@ def preprocess(data):
 
     # TSR(Tip speed Ratio)
     alpha = 20
-    temp['TSR1'] = 1 / np.tan(np.radians(temp['Pab1']+alpha))
+    temp['TSR1'] = 1 / np.tan(np.radians(temp['Pab1'] + alpha))
     temp['TSR2'] = 1 / np.tan(np.radians(temp['Pab2'] + alpha))
     temp['TSR3'] = 1 / np.tan(np.radians(temp['Pab3'] + alpha))
     temp['Bspd1'] = temp['TSR1'] * temp['Wspd_cos']
@@ -62,7 +62,7 @@ def preprocess(data):
     temp.drop(['TSR1','TSR2','TSR3','Bspd1','Bspd2','Bspd3'], axis=1, inplace=True)
         
     # Maximum power from wind
-    temp['Wspd_cube'] = (temp['Wspd_cos'])**3
+    # temp['Wspd_cube'] = (temp['Wspd_cos'])**3
     temp['P_max'] = ((temp['Wspd'])**3)/temp['Etmp_abs']
 
 
