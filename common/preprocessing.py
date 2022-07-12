@@ -1,4 +1,18 @@
-from common import *
+from common.util import *
+
+
+def impute_data(data):
+    data = data[~data['Day'].isin([65, 66, 67])]
+    bfill_cols = data.columns[2:-1]
+    for turbID in data['TurbID'].unique():
+        data_tid = data[data['TurbID'] == turbID]
+        first_id = data_tid.index[0]
+        if data.loc[first_id].isna().any():
+           data.loc[first_id, bfill_cols] = data.loc[first_id+1, bfill_cols]
+    data = data.interpolate()
+    print("Number of Nan values:", sum(data.isna().sum(axis='columns') > 0))
+    return data
+
 
 def preprocess(data):
     temp = data.copy()
@@ -68,3 +82,15 @@ def preprocess(data):
 
     temp = temp.dropna()
     return temp
+
+
+def generate_full_timestamp(data, drop=False):
+    data = data.copy()
+    for i in data['TurbID'].unique():
+        data_tid = data[data['TurbID'] == i]
+        if pd.Series(zip(data_tid['Day'], data_tid['Tmstamp'])).is_monotonic_increasing:  # check if sorted
+            data.loc[data['TurbID'] == i, 'Time'] = range(1, len(data_tid) + 1)
+    if drop:
+        data = data.drop(columns=['Day', 'Tmstamp'])
+    data['Time'] = data['Time'].astype(np.int32)
+    return data
