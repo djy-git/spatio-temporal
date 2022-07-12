@@ -149,3 +149,13 @@ Accuracy:  50.4010%
 
 ## Data
 - `Day` 대신 `Tmstamp` 단위로 데이터 분할
+
+
+---
+
+1. 기존의 잘 나왔던 연구들이나 코드들을 보고 따라하기
+   - Data
+   - Model
+3. Normalization features
+4. 학습이 잘 안 된다.
+   - 
