@@ -1,8 +1,12 @@
-import pandas as pd
-import numpy as np
+from common import *
 
 def preprocess(data):
     temp = data.copy()
+
+    location_data = pd.read_csv(join(PATH.input, "turb_location.csv")).set_index('TurbID', inplace=True)
+    location_dict = location_data.to_dict('index')
+    temp['X'] = temp['TurbID'].apply(lambda x: location_dict[x]['x'])
+    temp['Y'] = temp['TurbID'].apply(lambda y: location_dict[y]['y'])
 
     ## add cyclical encoded time feature
     temp.Tmstamp =temp.Tmstamp.apply(lambda x: int(x.split(':')[0]) + int(x.split(':')[1]) / 60)
