@@ -142,7 +142,6 @@ Accuracy:  50.4010%
 	22.669163500622364
 ```
 
----
 
 # 6. [proposed6.ipynb](proposed/proposed6.ipynb)
 **proposed5** 에서 다음을 추가
@@ -174,4 +173,90 @@ Accuracy:  55.3906%
 
  --- Overall Score --- 
 	23.400198303120494
+```
+
+
+# 7. [proposed7.ipynb](proposed/proposed7.ipynb)
+**proposed5** 에서 다음을 추가
+
+## Data
+- Validation set을 여러 개로 사용 (Training set과 겹치는 부분 있음)
+
+
+![](assets/proposed7_validation_turbine1.png)
+- `Patv=0`인 부분을 잘 다듬어야 한다.
+
+```
+ File Name : 
+	proposed7.csv
+
+Accuracy:  52.8691%
+
+ 	 RMSE: 26.707425563416784, MAE: 20.76662316993727
+
+ --- Overall Score --- 
+	23.737024366677026
+```
+
+
+# 8. [proposed8.ipynb](proposed/proposed8.ipynb)
+**proposed7** 에서 다음을 추가
+
+## Data
+- Feature engineering 추가 (proposed6 보다 개선)
+
+![](assets/proposed8_result.png)
+
+```
+ File Name : 
+	proposed8.csv
+
+Accuracy:  32.0247%
+
+ 	 RMSE: 34.68416953844638, MAE: 27.361807267416847
+
+ --- Overall Score --- 
+	31.022988402931617
+```
+
+
+# 9. [proposed9.ipynb](proposed/proposed9.ipynb)
+**proposed8** 에서 다음을 추가
+
+## Data
+- `Patv`만 사용하여 예측
+
+![](assets/proposed9_result.png)
+
+
+```
+ File Name : 
+	proposed9.csv
+
+Accuracy:  49.4525%
+
+ 	 RMSE: 28.70997457789587, MAE: 22.651805544984676
+
+ --- Overall Score --- 
+	25.680890061440273
+```
+
+
+# 10. [proposed10.ipynb](proposed/proposed10.ipynb)
+**proposed7** 에서 다음을 추가
+
+## Model
+`f: X_{1:t-s}, y_{1:t-s} → X_{t-s+1:t}, y_{t-s+1:t}`
+
+
+```
+ File Name : 
+	proposed10.csv
+
+Accuracy:  62.8850%
+
+ 	 RMSE: 47.01281746268941, MAE: 44.8693864877889
+
+ --- Overall Score --- 
+	45.94110197523916
 ```

@@ -34,7 +34,9 @@
 11. `Patv`
     - 🔧 **0 값이 나오는 경우를 잘 다루는 것이 이 문제의 핵심**
     - 🔧 **[0, 1] 이내의 값이 23만개로 전체 데이터의 8%를 차지한다. 어떻게든 처리가 필요해 보인다.**
-   
+12. `Location_X`, `Location_Y`
+    - `TurbID`의 위치
+
 
 # 2. Missing values
 1. **45587개** rows가 `TurbID`, `Day`, `Tmstamp`를 제외한 모든 feature들에서 Nan값을 가진다.
@@ -47,10 +49,22 @@
     ![](assets/Tmstamp별Patv.png)
 
 
+# 3. Feature engineering
+1. Power, RPM과 관련된 변수들을 추가
+   - `Wspd^3`
+   - `Wspd_cos` = `Wspd * cos(Wdir/180 * π)`
+   - `TSR1`, `TSR2`, `TSR3` = `cot(Pab + alpha)`, `alpha=20`
+   - `Bspd1`, `Bspd2`, `Bspd3` = `TSR * Wspd_cos`
+   - `rpm` = `mean(Bspd)`
+2. 바람의 방향을 의미하는 변수를 추가
+   - `RWdir`: `Wdir - Ndir`
+
+
+# 4. Anomaly handling
+1. `Etmp`, `Itmp` 이상치: interpolation
+
+
 ---
 
-1. Feature visualization 해보기
-2. 5일 대신 좀 더 학습 데이터를 길거나 짧게 해보기
-3. 시간에 따른 비중 차이를 두어야 함
-4. Outlier 처리방법 고찰
-5. 육풍, 해풍을 고려한 하루 내 시간 고려
+1. 시간에 따른 비중 차이를 두어야 함
+2. 육풍, 해풍을 고려한 하루 내 시간 고려
