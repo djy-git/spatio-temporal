@@ -1,6 +1,4 @@
 from common.util import *
-import tensorflow as tf
-
 
 # def make_train_val_test_data(data, seq_len):
 #     train_x, train_y = make_train_data(data, seq_len, 198)
@@ -137,11 +135,15 @@ import tensorflow as tf
 #     return train_x, train_y
 
 
-def generate_dataset(X, y=None, batch_size=None):
+def generate_dataset(X, y=None, batch_size=None, shuffle=False):
+    import tensorflow as tf
+
     if y is None:
         ds = tf.data.Dataset.from_tensor_slices(X)
     else:
         ds = tf.data.Dataset.from_tensor_slices((X, y))
+    if shuffle:
+        ds = ds.shuffle(buffer_size=1000)
     return ds.batch(batch_size).cache().prefetch(tf.data.AUTOTUNE)
 
 
@@ -169,7 +171,6 @@ def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, tes
         data_tid = data[data['TurbID'] == i].drop(columns=['TurbID'])
         times    = data_tid['Time'].sort_values()
         data_tid = data_tid.set_index('Time')
-        data_tid['Time'] = data_tid.index
 
         # Select time index
         inputs, outputs = split_times(times, in_seq_len, out_seq_len, stride)
