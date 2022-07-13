@@ -194,7 +194,7 @@ def turbine_scores(pred, gt, raw_data, examine_len, stride=1):
         # prediction[abnormal_indices] = 0
         # targets[abnormal_indices] = 0
 
-        _mae, _rmse = regressor_scores(prediction[-examine_len:] / 1000, targets[-examine_len:] / 1000)
+        _mae, _rmse = regressor_scores(prediction[-examine_len:] , targets[-examine_len:])
         if _mae != _mae or _rmse != _rmse:
             continue
         maes.append(_mae)
