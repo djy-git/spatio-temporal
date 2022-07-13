@@ -233,10 +233,21 @@ Accuracy:  62.8850%
  --- Overall Score --- 
 	45.94110197523916
 ```
-# 10. [proposed11.ipynb](proposed/proposed11.ipynb)
-[medium article](https://towardsdatascience.com/gru-recurrent-neural-networks-a-smart-way-to-predict-sequences-in-python-80864e4fe9f6)
 
+
+# 11. [proposed11.ipynb](proposed/proposed11.ipynb)
+[medium article](https://towardsdatascience.com/gru-recurrent-neural-networks-a-smart-way-to-predict-sequences-in-python-80864e4fe9f6)
 
 Encoder - Decoder 모델 적용,
 input , output
 288*n_features , 288*n_features 로 변경
+
+
+# 12. [proposed12.ipynb](proposed/proposed12.ipynb)
+**proposed7** 에서 다음을 추가
+
+## Data
+- StandardScaler
+
+## Model
+- TensorFlow Time Series example (LSTMCell)
