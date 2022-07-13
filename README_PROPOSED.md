@@ -103,43 +103,16 @@ Accuracy:  40.8675%
 ## Data
 - `TurbID` 별로 model을 생성
 
-## Training
-- `batch_size=32`
-
 ```
  File Name : 
 	proposed4.csv
 
-Accuracy:  53.8061%
+Accuracy:  54.3031%
 
- 	 RMSE: 29.735404515681957, MAE: 24.527271051411567
-
- --- Overall Score --- 
-	27.131337783546762
-```
-
-
-# 5. [proposed5.ipynb](proposed/proposed5.ipynb)
-**proposed2** 에서 다음을 추가
-
-## Data
-- Missing value 처리
-  - `Day=65, 66, 67` 제거
-  - `Day=1, Tmstamp=00:00` 
-  - 나머지는 interpolation 사용하여 채우기
-  - e.g. `... → [(58, 59, 60, 61, 62), (63, 64)] → [(68, 69, 70, 71, 72), (73, 74)] → ...`
-
-
-```
- File Name : 
-	proposed5.csv
-
-Accuracy:  50.4010%
-
- 	 RMSE: 25.910936738551044, MAE: 19.427390262693685
+ 	 RMSE: 34.0816873234851, MAE: 30.090377192844116
 
  --- Overall Score --- 
-	22.669163500622364
+	32.08603225816461
 ```
 
 
@@ -260,3 +233,10 @@ Accuracy:  62.8850%
  --- Overall Score --- 
 	45.94110197523916
 ```
+# 10. [proposed11.ipynb](proposed/proposed11.ipynb)
+[medium article](https://towardsdatascience.com/gru-recurrent-neural-networks-a-smart-way-to-predict-sequences-in-python-80864e4fe9f6)
+
+
+Encoder - Decoder 모델 적용,
+input , output
+288*n_features , 288*n_features 로 변경
