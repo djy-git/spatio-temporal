@@ -1,9 +1,28 @@
 from common.util import *
 
 
+def generate_full_timestamp(data, drop=False):
+    data = data.copy()
+
+    # Tmstamp: Timestamp in a day
+    tms_list = list(pd.unique(data['Tmstamp']))
+    data['Time_in_day'] = data['Tmstamp'].apply(lambda x: tms_list.index(x) + 1)
+
+    for i in data['TurbID'].unique():
+        data_tid = data[data['TurbID'] == i]
+        if pd.Series(zip(data_tid['Day'], data_tid['Tmstamp'])).is_monotonic_increasing:  # check if sorted
+            data.loc[data['TurbID'] == i, 'Time'] = range(1, len(data_tid) + 1)
+
+    # Time: Not duplicated timestamp
+    data['Time'] = data['Time'].astype(np.int32)
+    if drop:
+        data = data.drop(columns=['Day', 'Tmstamp'])
+    return data
+
+
 def impute_data(data):
     data = data[~data['Day'].isin([65, 66, 67])]
-    bfill_cols = data.columns[2:-1]
+    bfill_cols = ['Wspd', 'Wdir', 'Etmp', 'Itmp', 'Ndir', 'Pab1', 'Pab2', 'Pab3', 'Prtv', 'Patv']
     for turbID in data['TurbID'].unique():
         data_tid = data[data['TurbID'] == turbID]
         first_id = data_tid.index[0]
@@ -46,7 +65,7 @@ def preprocess(data):
 
     # Wind speed cosine, sine
     temp['Wspd_cos'] = temp['Wspd']*np.cos(temp['Wdir']/180*np.pi)
-    temp['Wspd_sin'] = temp['Wspd']*np.sin(temp['Wdir']/180*np.pi)
+    # temp['Wspd_sin'] = temp['Wspd']*np.sin(temp['Wdir']/180*np.pi)
 
     # TSR(Tip speed Ratio)
     alpha = 20
@@ -59,10 +78,10 @@ def preprocess(data):
 
     # RPM derived from blade speed
     temp['RPM'] = ((temp['Bspd1']+temp['Bspd2']+temp['Bspd3'])/3)
-    temp.drop(['TSR1','TSR2','TSR3','Bspd1','Bspd2','Bspd3'], axis=1, inplace=True)
+    # temp.drop(['TSR1','TSR2','TSR3','Bspd1','Bspd2','Bspd3'], axis=1, inplace=True)
         
     # Maximum power from wind
-    # temp['Wspd_cube'] = (temp['Wspd_cos'])**3
+    temp['Wspd_cube'] = (temp['Wspd_cos'])**3
     temp['P_max'] = ((temp['Wspd'])**3)/temp['Etmp_abs']
 
 
@@ -83,21 +102,3 @@ def preprocess(data):
     # temp = temp.dropna()
     return temp
 
-
-def generate_full_timestamp(data, drop=False):
-    data = data.copy()
-
-    # Tmstamp: Timestamp in a day
-    tms_list = list(pd.unique(data['Tmstamp']))
-    data['Tmstamp'] = data['Tmstamp'].apply(lambda x: tms_list.index(x) + 1)
-
-    for i in data['TurbID'].unique():
-        data_tid = data[data['TurbID'] == i]
-        if pd.Series(zip(data_tid['Day'], data_tid['Tmstamp'])).is_monotonic_increasing:  # check if sorted
-            data.loc[data['TurbID'] == i, 'Time'] = range(1, len(data_tid) + 1)
-
-    # Time: Not duplicated timestamp
-    data['Time'] = data['Time'].astype(np.int32)
-    if drop:
-        data = data.drop(columns=['Day', 'Tmstamp'])
-    return data
