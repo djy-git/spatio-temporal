@@ -24,7 +24,7 @@ def marking_data(data, marking_value_target):
            (data['Pab1'] > 89) | (data['Pab2'] > 89) | (data['Pab3'] > 89) | \
            (data['Wdir'] < -180) | (data['Wdir'] > 180) | (data['Ndir'] < -720) | (data['Ndir'] > 720) | \
            (data['Patv'].isnull())
-    indices = np.where(~cond)
+    indices = np.where(cond)
     data['Patv'].iloc[indices] = marking_value_target
     return data
 
