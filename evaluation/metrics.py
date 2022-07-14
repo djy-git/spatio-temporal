@@ -159,7 +159,7 @@ def turbine_scores(pred, gt, raw_data, examine_len, stride=1):
         pred: prediction for one turbine
         gt: ground truth
         raw_data: the DataFrame of one wind turbine
-        examine_len:
+        examine_len: 288 for 2days
         stride:
     Returns:
         The averaged MAE and RMSE
@@ -171,7 +171,7 @@ def turbine_scores(pred, gt, raw_data, examine_len, stride=1):
     maes, rmses = [], []
     cnt_sample, out_seq_len, _ = pred.shape
     cnt_sample = out_seq_len
-    for i in range(1, cnt_sample+1, stride):
+    for i in range(examine_len, cnt_sample+1, stride):
         # indices = np.where(~cond[i:out_seq_len + i])
 
         # roll window size from 288 to 0,
@@ -233,8 +233,8 @@ def regressor_detailed_scores(predictions, gts, raw_df_lst):
 
         all_mae.append(_mae)
         all_rmse.append(_rmse)
-    total_mae = np.array(all_mae).sum()
-    total_rmse = np.array(all_rmse).sum()
+    total_mae = np.array(all_mae).sum()/capacity
+    total_rmse = np.array(all_rmse).sum()/capacity
     return total_mae, total_rmse
 
 
@@ -255,3 +255,21 @@ def regressor_metrics(pred, gt):
     _mape = mape(pred, gt)
     _mspe = mspe(pred, gt)
     return _mae, _mse, _rmse, _mape, _mspe
+def cond_loss(loss_function, marked_traget_value):
+
+    # 조건에 맞는 인덱스에 대해서만 loss 계산을 해야함.
+    def _cond_loss(pred, gt):
+        indices = pred[:, -1] != marked_traget_value
+        pred_filtered = pred[indices]
+        gt_filtered = gt[indices]
+
+        if gt_filtered.shape == pred_filtered.shape:
+            if loss_function == 'mse':
+                loss = mse(pred, gt)
+            elif loss_function == 'rmse':
+                loss = rmse(pred, gt)
+            return loss
+        else:
+            print(f'Shape mismatch for output and ground truth array {pred_filtered.shape}and {gt_filtered.shape}')
+    return _cond_loss
+
