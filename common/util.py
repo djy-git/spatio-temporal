@@ -8,7 +8,6 @@ class PATH:
     target = join(root, 'data', 'target.csv')
 
 
-
 @dataclass
 class Timer(ContextDecorator):
     """Context manager for timing the execution of a block of code.

@@ -30,7 +30,6 @@ def generate_dataset(X, y=None, batch_size=32, shuffle=False):
         ds = ds.shuffle(buffer_size=1000)
     return ds.batch(batch_size).cache().prefetch(tf.data.AUTOTUNE)
 
-
 def split_times(times, in_seq_len, out_seq_len, stride):
     """Split time series into input and output ranges
 

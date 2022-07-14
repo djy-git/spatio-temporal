@@ -69,7 +69,6 @@ def impute_data(data):
     print("Number of Nan values:", sum(data.isna().sum(axis='columns') > 0))
     return data
 
-
 def preprocess(data):
     """Preprocess data
     Add features with feature engineering
@@ -170,4 +169,3 @@ def preprocess(data):
     #
     #     temp = temp.dropna()
     return temp
-
