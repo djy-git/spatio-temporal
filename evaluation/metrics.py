@@ -11,7 +11,7 @@ Date:    2022/03/10
 """
 import time
 import numpy as np
-
+import tensorflow as tf
 
 def ignore_zeros(predictions, grounds):
     """
@@ -255,21 +255,24 @@ def regressor_metrics(pred, gt):
     _mape = mape(pred, gt)
     _mspe = mspe(pred, gt)
     return _mae, _mse, _rmse, _mape, _mspe
-def cond_loss(loss_function, marked_traget_value):
 
+
+def cond_loss(loss_function, marked_traget_value):
     # 조건에 맞는 인덱스에 대해서만 loss 계산을 해야함.
-    def _cond_loss(pred, gt):
+    def _cond_loss(gt, pred):
         indices = pred[:, -1] != marked_traget_value
-        pred_filtered = pred[indices]
-        gt_filtered = gt[indices]
+        pred_filtered = pred[0][indices]
+        gt_filtered = gt[0][indices]
 
         if gt_filtered.shape == pred_filtered.shape:
-            if loss_function == 'mse':
-                loss = mse(pred, gt)
-            elif loss_function == 'rmse':
-                loss = rmse(pred, gt)
+            error = gt - pred
+            sq_error = tf.square(error)
+            loss = sq_error / 2
+            if loss_function == 'rmse':
+                loss = tf.root(loss)
             return loss
         else:
             print(f'Shape mismatch for output and ground truth array {pred_filtered.shape}and {gt_filtered.shape}')
+
     return _cond_loss
 
