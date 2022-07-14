@@ -159,7 +159,7 @@ def turbine_scores(pred, gt, raw_data, examine_len, stride=1):
         pred: prediction for one turbine
         gt: ground truth
         raw_data: the DataFrame of one wind turbine
-        examine_len:
+        examine_len: 288 for 2days
         stride:
     Returns:
         The averaged MAE and RMSE
@@ -171,7 +171,7 @@ def turbine_scores(pred, gt, raw_data, examine_len, stride=1):
     maes, rmses = [], []
     cnt_sample, out_seq_len, _ = pred.shape
     cnt_sample = out_seq_len
-    for i in range(1, cnt_sample+1, stride):
+    for i in range(examine_len, cnt_sample+1, stride):
         # indices = np.where(~cond[i:out_seq_len + i])
 
         # roll window size from 288 to 0,
@@ -233,8 +233,8 @@ def regressor_detailed_scores(predictions, gts, raw_df_lst):
 
         all_mae.append(_mae)
         all_rmse.append(_rmse)
-    total_mae = np.array(all_mae).sum()
-    total_rmse = np.array(all_rmse).sum()
+    total_mae = np.array(all_mae).sum()/capacity
+    total_rmse = np.array(all_rmse).sum()/capacity
     return total_mae, total_rmse
 
 
