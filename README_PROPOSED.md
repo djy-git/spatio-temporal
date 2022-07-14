@@ -1,3 +1,7 @@
+~!# Top rank: baseline11 
+
+---
+
 # 1. [baseline1.ipynb](proposed/baseline1.ipynb)
 ## Data
 - Train data: 5일
@@ -239,8 +243,8 @@ Accuracy:  62.8850%
 [medium article](https://towardsdatascience.com/gru-recurrent-neural-networks-a-smart-way-to-predict-sequences-in-python-80864e4fe9f6)
 
 Encoder - Decoder 모델 적용,
-input , output
-288*n_features , 288*n_features 로 변경
+input, output
+288*n_features, 288*n_features 로 변경
 
 
 # 12. [proposed12.ipynb](proposed/proposed12.ipynb)
