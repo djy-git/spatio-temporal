@@ -169,3 +169,22 @@ def preprocess(data):
     #
     #     temp = temp.dropna()
     return temp
+
+def select_features(data, threshold=0.4):
+    """Select features which has correlations with Patv more than threshold
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Input data
+    threshold : float (optional)
+        Correlation threshold
+
+    Returns
+    -------
+    features : list
+        Relevant features
+    """
+    corr = data.corr()['Patv'].sort_values()
+    corr_abs = corr.abs().sort_values()
+    return ['TurbID', 'Time'] + list(corr_abs[corr_abs > threshold].index)
