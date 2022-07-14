@@ -41,31 +41,31 @@ def preprocess(data):
     temp['X'] = temp['TurbID'].apply(lambda x: location_dict[x]['x'])
     temp['Y'] = temp['TurbID'].apply(lambda y: location_dict[y]['y'])
 
-    # ## add cyclical encoded time feature
-    # temp.Tmstamp = temp.Tmstamp.apply(lambda x: int(x.split(':')[0]) + int(x.split(':')[1]) / 60)
-    # temp['Time_cos'] = np.cos(2 * np.pi * (temp.Tmstamp / 24))
-    # temp['Time_sin'] = np.sin(2 * np.pi * (temp.Tmstamp / 24))
-    #
-    # ## add cyclical encoded time feature
-    # temp['Day_cos'] = np.cos(2 * np.pi * (temp.Day / 365))
-    # temp['Day_sin'] = np.sin(2 * np.pi * (temp.Day / 365))
+    ## add cyclical encoded time feature
+    temp.Tmstamp = temp.Tmstamp.apply(lambda x: int(x.split(':')[0]) + int(x.split(':')[1]) / 60)
+    temp['Time_cos'] = np.cos(2 * np.pi * (temp.Tmstamp / 24))
+    temp['Time_sin'] = np.sin(2 * np.pi * (temp.Tmstamp / 24))
+
+    ## add cyclical encoded time feature
+    temp['Day_cos'] = np.cos(2 * np.pi * (temp.Day / 365))
+    temp['Day_sin'] = np.sin(2 * np.pi * (temp.Day / 365))
 
     # celsius to kelvin
     c = 243.15
-    temp['Etmp_abs'] = temp['Etmp']+243.15
+    temp['Etmp_abs'] = temp['Etmp'] + c
 
     # Wind absolute direction adjusted Wdir + Ndir
     temp['Wdir_adj'] = temp['Wdir'] + temp['Ndir']
-    # temp['Wdir_cos'] = np.cos(temp['Wdir_adj']/180*np.pi)
-    # temp['Wdir_sin'] = np.sin(temp['Wdir_adj']/180*np.pi)
-    #
-    # # Nacelle Direction cosine sine
-    # temp['Ndir_cos'] = np.cos(temp['Ndir']/180*np.pi)
-    # temp['Ndir_sin'] = np.sin(temp['Ndir']/180*np.pi)
+    temp['Wdir_cos'] = np.cos(temp['Wdir_adj']/180*np.pi)
+    temp['Wdir_sin'] = np.sin(temp['Wdir_adj']/180*np.pi)
+
+    # Nacelle Direction cosine sine
+    temp['Ndir_cos'] = np.cos(temp['Ndir']/180*np.pi)
+    temp['Ndir_sin'] = np.sin(temp['Ndir']/180*np.pi)
 
     # Wind speed cosine, sine
     temp['Wspd_cos'] = temp['Wspd']*np.cos(temp['Wdir']/180*np.pi)
-    # temp['Wspd_sin'] = temp['Wspd']*np.sin(temp['Wdir']/180*np.pi)
+    temp['Wspd_sin'] = temp['Wspd']*np.sin(temp['Wdir']/180*np.pi)
 
     # TSR(Tip speed Ratio)
     alpha = 20
@@ -78,8 +78,7 @@ def preprocess(data):
 
     # RPM derived from blade speed
     temp['RPM'] = ((temp['Bspd1']+temp['Bspd2']+temp['Bspd3'])/3)
-    # temp.drop(['TSR1','TSR2','TSR3','Bspd1','Bspd2','Bspd3'], axis=1, inplace=True)
-        
+
     # Maximum power from wind
     temp['Wspd_cube'] = (temp['Wspd_cos'])**3
     temp['P_max'] = ((temp['Wspd'])**3)/temp['Etmp_abs']
@@ -98,7 +97,7 @@ def preprocess(data):
     #
     # temp['Patv1'] = temp['Patv'].shift(-144)
     # temp['Patv2'] = temp['Patv'].shift(-144 * 2)
-
+    #
     # temp = temp.dropna()
     return temp
 
