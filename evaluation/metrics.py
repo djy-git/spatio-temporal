@@ -257,22 +257,50 @@ def regressor_metrics(pred, gt):
     return _mae, _mse, _rmse, _mape, _mspe
 
 
-def cond_loss(loss_function, marked_traget_value):
-    # 조건에 맞는 인덱스에 대해서만 loss 계산을 해야함.
-    def _cond_loss(gt, pred):
-        indices = pred[:, -1] != marked_traget_value
-        pred_filtered = pred[0][indices]
-        gt_filtered = gt[0][indices]
+class CondLoss(tf.keras.losses.Loss):
+    def __init__(self, loss_fn, marked_target_value, **kwargs):
+        self.loss_fn = loss_fn
+        self.marked_target_value = marked_target_value
+        super().__init__(**kwargs)
+    def call(self, y_true, y_pred):
+        # y_true, y_pred: [B, S, D]
+        assert y_true.shape == y_pred.shape, f'Shape mismatch for output and ground truth array {y_true.shape} and {y_pred.shape}'
 
-        if gt_filtered.shape == pred_filtered.shape:
-            error = gt - pred
-            sq_error = tf.square(error)
-            loss = sq_error / 2
-            if loss_function == 'rmse':
-                loss = tf.root(loss)
-            return loss
+        _, S, D = y_true.shape  # Batch, Sequence, Dim of features
+        y_true = tf.reshape(y_true, (-1, D))
+        y_pred = tf.reshape(y_pred, (-1, D))
+
+        idxs_valid = (y_pred[:, -1] != self.marked_target_value)
+        y_true_valid, y_pred_valid = y_true[idxs_valid], y_pred[idxs_valid]
+        error = y_true_valid - y_pred_valid
+        if self.loss_fn == 'rmse':
+            return tf.sqrt(tf.reduce_mean(tf.square(error)))
+        elif self.loss_fn == 'mse':
+            return tf.reduce_mean(tf.square(error))
+        elif self.loss_fn == 'mae':
+            return tf.reduce_mean(tf.abs(error))
         else:
-            print(f'Shape mismatch for output and ground truth array {pred_filtered.shape}and {gt_filtered.shape}')
+            raise NotImplementedError
 
-    return _cond_loss
 
+# def create_custom_metric(loss_fn, marked_target_value):
+#     def loss(y_true, y_pred):
+#         # y_true, y_pred: [B, S, D]
+#         assert y_true.shape == y_pred.shape, f'Shape mismatch for output and ground truth array {y_true.shape} and {y_pred.shape}'
+#
+#         _, S, D = y_true.shape  # Batch, Sequence, Dim of features
+#         y_true = tf.reshape(y_true, (-1, D))
+#         y_pred = tf.reshape(y_pred, (-1, D))
+#
+#         idxs_valid = (y_pred[:, -1] != marked_target_value)
+#         y_true_valid, y_pred_valid = y_true[idxs_valid], y_pred[idxs_valid]
+#         error = y_true_valid - y_pred_valid
+#         if loss_fn == 'rmse':
+#             return tf.sqrt(tf.reduce_mean(tf.square(error)))
+#         elif loss_fn == 'mse':
+#             return tf.reduce_mean(tf.square(error))
+#         elif loss_fn == 'mae':
+#             return tf.reduce_mean(tf.abs(error))
+#         else:
+#             raise NotImplementedError
+#     return loss
