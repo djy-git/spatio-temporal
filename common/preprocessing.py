@@ -103,7 +103,6 @@ def preprocess(data):
     # celsius to kelvin
     c = 243.15
     temp['Etmp_abs'] = temp['Etmp'] + c
-    temp['Etmp_abs'] = temp['Etmp'] + 243.15
 
     # Wind absolute direction adjusted Wdir + Ndir
     temp['Wdir_adj'] = temp['Wdir'] + temp['Ndir']
