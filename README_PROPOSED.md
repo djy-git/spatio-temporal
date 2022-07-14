@@ -255,3 +255,17 @@ input, output
 
 ## Model
 - TensorFlow Time Series example (LSTMCell)
+
+
+# 13. [proposed13.ipynb](proposed/proposed13.ipynb)
+## Data
+- `generate_full_timestamp()`
+- `fillna(method='bfill')`
+- `preprocess()`
+- `select_features()`
+- `marking_data()`
+- `make_train_val_test_data(in_seq_len=2*144, out_seq_len=2*144, stride=144, shuffle=False, test_size=0.2)`
+- `generate_dataset(train_x_clean, train_y, batch_size=256, shuffle=True)`
+
+## Model
+- `proposed12.ipynb`와 동일
