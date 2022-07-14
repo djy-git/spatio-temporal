@@ -2,6 +2,20 @@ from common.util import *
 
 
 def generate_full_timestamp(data, drop=False):
+    """Generate not duplicated time series index
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Input data
+    drop : bool (optional)
+        Whether to drop `Day`, `Tmstamp` features in returned data
+
+    Returns
+    -------
+    data : pandas.DataFrame
+        Data which has Time indicator features `Time`
+    """
     data = data.copy()
 
     # Tmstamp: Timestamp in a day
@@ -21,6 +35,21 @@ def generate_full_timestamp(data, drop=False):
 
 
 def impute_data(data):
+    """Impute data
+    1. Drop continuous missing rows
+    2. Fill missing rows with backward values using threshold
+    3. Interpolation
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Input data
+
+    Returns
+    -------
+    data : pandas.DataFrame
+        Imputed data
+    """
     data = data[~data['Day'].isin([65, 66, 67])]
     bfill_cols = ['Wspd', 'Wdir', 'Etmp', 'Itmp', 'Ndir', 'Pab1', 'Pab2', 'Pab3', 'Prtv', 'Patv']
     for turbID in data['TurbID'].unique():
@@ -34,6 +63,19 @@ def impute_data(data):
 
 
 def preprocess(data):
+    """Preprocess data
+    Add features with feature engineering
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Input data
+
+    Returns
+    -------
+    data : pandas.DataFrame
+        Preprocessed data
+    """
     temp = data.copy()
 
     location_data = pd.read_csv(join(PATH.input, "turb_location.csv")).set_index('TurbID')
