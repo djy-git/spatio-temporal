@@ -255,3 +255,32 @@ def regressor_metrics(pred, gt):
     _mape = mape(pred, gt)
     _mspe = mspe(pred, gt)
     return _mae, _mse, _rmse, _mape, _mspe
+
+# 조건에 맞는 인덱스에 대해서만 loss 계산을 해야함.
+def cond_mse(pred, gt, marked_traget_value):
+
+    indices = pred[:, -1] != marked_traget_value
+    pred_filtered = pred[indices]
+    gt_filtered = gt[indices]
+
+    if gt_filtered.shape == pred_filtered.shape:
+        _mse = mse(pred, gt)
+        return _mse
+    else:
+        print(f'Shape mismatch for output and ground truth array {pred_filtered.shape}and {gt_filtered.shape}')
+
+# 조건에 맞는 인덱스에 대해서만 loss 계산을 해야함.
+def cond_rmse(pred, gt, marked_traget_value):
+
+    indices = pred[:, -1] != marked_traget_value
+    pred_filtered = pred[indices]
+    gt_filtered = gt[indices]
+
+    if gt_filtered.shape == pred_filtered.shape:
+        _rmse = rmse(pred, gt)
+        return _rmse
+    else:
+        print(f'Shape mismatch for output and ground truth array {pred_filtered.shape}and {gt_filtered.shape}')
+
+
+

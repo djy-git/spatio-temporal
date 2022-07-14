@@ -19,6 +19,14 @@ def generate_full_timestamp(data, drop=False):
         data = data.drop(columns=['Day', 'Tmstamp'])
     return data
 
+def marking_data(data, marking_value_target):
+    cond = (data['Patv'] <= 0) & (data['Wspd'] > 2.5) | \
+           (data['Pab1'] > 89) | (data['Pab2'] > 89) | (data['Pab3'] > 89) | \
+           (data['Wdir'] < -180) | (data['Wdir'] > 180) | (data['Ndir'] < -720) | (data['Ndir'] > 720) | \
+           (data['Patv'].isnull())
+    indices = np.where(~cond)
+    data['Patv'].iloc[indices] = marking_value_target
+    return data
 
 def impute_data(data):
     data = data[~data['Day'].isin([65, 66, 67])]
