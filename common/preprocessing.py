@@ -99,7 +99,7 @@ def preprocess(data):
     temp['Wspd_cube'] = (temp['WspdX']) ** 3
     temp['P_max'] = ((temp['Wspd']) ** 3) / temp['Etmp_abs']
 
-    # Apparent power
+    # Apparent power, Power arctangent
     temp['Papt'] = np.sqrt(temp['Prtv'] ** 2 + temp['Patv'] ** 2)
     temp['Patan'] = np.arctan(temp['Prtv'] / temp['Patv']).fillna(-np.pi / 2)
 
