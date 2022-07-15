@@ -43,3 +43,18 @@ class Timer(ContextDecorator):
         elapsed_time = time() - self.start_time
         print(f"* {self.name}: {elapsed_time:.2f}s ({elapsed_time/60:.2f}m)")
         return False
+
+
+def check_nan(data, name):
+    """Print number of data and nan rows
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Input data
+    name : str
+        Name to identify data
+    """
+    print("- Data name:", name)
+    print("  - Number of data:", len(data))
+    print("  - Number of nan rows:", sum(data.isna().sum(axis='columns') > 0))
