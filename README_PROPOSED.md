@@ -269,3 +269,11 @@ input, output
 
 ## Model
 - `proposed12.ipynb`와 동일
+
+# 13. [proposed14.ipynb](proposed/proposed14.ipynb)
+## Data
+marking abnormals to Zero
+features = ['TurbID','Day', 'WspdY_abs', 'Itmp', 'WdirX', 'WspdX_abs', 'Patan', 'Prtv', 'TSR', 'Pab', 'P_max', 'Wspd_cube', 'Wspd', 'WspdX', 'RPM', 'Papt', 'Patv']
+
+## Model
+- `proposed11.ipynb`와 동일
