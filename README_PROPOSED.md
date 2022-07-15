@@ -294,3 +294,54 @@ features = ['TurbID','Day','RPM', 'Bspd1', 'Bspd3', 'Bspd2', 'WspdX', 'Wspd', 'W
 
 ![img.png](assets/proposed15_loss_plot.png)
 
+
+# 16. [proposed16.ipynb](proposed/proposed16.ipynb)
+## Data
+1. Impute data
+   ```
+   threshold = 12*6 (12 hour)
+   ```
+2. Feature engineering
+3. Smoothing `Patv`
+4. Split data
+    ```
+    IN_SEQ_LEN  = 2*144
+    OUT_SEQ_LEN = 2*144
+    STRIDE      = 144
+    SHUFFLE     = False
+    TEST_SIZE   = 0.2
+    ```
+5. Feature selection
+   ```
+   threshold = 0.4
+   ```
+6. TensorFlow Dataset
+   ```
+   BATCH_SIZE = 256
+   SHUFFLE    = False
+   ```
+
+## Model
+[LSTM-RNN Feedback network](https://www.tensorflow.org/tutorials/structured_data/time_series?hl=ko#%EA%B3%A0%EA%B8%89_%EC%9E%90%EA%B8%B0_%ED%9A%8C%EA%B7%80_%EB%AA%A8%EB%8D%B8)
+
+## Training
+- Optimizer: Adam
+- Loss: mse
+- EarlyStopping(patience=10)
+- ReduceLROnPlateau(factor=0.9, patience=3)
+
+![](assets/proposed16_loss.png)
+![](assets/proposed16_train_result.png)
+![](assets/proposed16_val_result.png)
+
+```
+ File Name : 
+	proposed16.csv
+
+Accuracy:  56.4644%
+
+ 	 RMSE: 400.65273414975206, MAE: 333.50006322548563
+
+ --- Overall Score --- 
+	367.07639868761885
+```
