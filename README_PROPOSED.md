@@ -347,24 +347,53 @@ Accuracy:  56.4644%
 ```
 
 
-# 17. [proposed17-BN.ipynb](proposed/proposed17-BN.ipynb)
-**proposed16** 에서 다음을 추가
+# 17. [proposed17.ipynb](proposed/proposed17.ipynb)
+**proposed16** 에서 Transformer([Timeseries classification with a Transformer model](https://keras.io/examples/timeseries/timeseries_transformer_classification)) 추가
 
-## Model
-- [Transformer](https://keras.io/examples/timeseries/timeseries_transformer_classification/) 사용
-- Input 직후, `BatchNormalization()` 추가
+1. [proposed17.ipynb](proposed/proposed17.ipynb)
+   - Scaling X
+   
+    ```
+     File Name : 
+        proposed17.csv
+    
+    Accuracy:  61.0097%
+    
+         RMSE: 387.11069723116805, MAE: 310.92304896237306
+    
+     --- Overall Score --- 
+        349.01687309677055
+    ```
+    ![](assets/proposed17_learning_curve.png) 
+    ![](assets/proposed17_training_result.png) 
 
-![](assets/proposed17-BN_learning_curve.png)
-![](assets/proposed17-BN_training_result.png)
+2. [proposed17-BN.ipynb](proposed/proposed17-BN.ipynb)
+   - Scaling X
+   - Input layer 뒤에 Batch Normalization 추가
 
-```
- File Name : 
-	proposed17-BN.csv
+   ```
+     File Name : 
+        proposed17-BN.csv
+    
+    Accuracy:  60.2466%
+    
+         RMSE: 375.23501836364164, MAE: 279.8426663328266
+    
+     --- Overall Score --- 
+        327.5388423482341
+    ```
 
-Accuracy:  60.2466%
+4. [proposed17-MinMax.ipynb](proposed/proposed17-MinMax.ipynb) 
+   - MinMaxScaler 사용
 
- 	 RMSE: 375.23501836364164, MAE: 279.8426663328266
-
- --- Overall Score --- 
-	327.5388423482341
-```
+    ```
+     File Name : 
+        proposed17-MinMax.csv
+    
+    Accuracy:  59.2988%
+    
+         RMSE: 467.9350048008359, MAE: 417.54909776180284
+    
+     --- Overall Score --- 
+        442.7420512813194
+    ```
