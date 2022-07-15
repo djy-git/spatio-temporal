@@ -55,6 +55,28 @@ def check_nan(data, name):
     name : str
         Name to identify data
     """
-    print("- Data name:", name)
+    print("* Data name:", name)
     print("  - Number of data:", len(data))
     print("  - Number of nan rows:", sum(data.isna().sum(axis='columns') > 0))
+
+
+def set_random_seed(seed):
+    """Set random seed for reusability
+
+    seed : int
+        Random seed
+    """
+    import tensorflow as tf
+    import torch
+
+    random.seed(seed)
+    np.random.seed(seed)
+    sklearn.random.seed(RANDOM_STATE)
+    os.environ["PYTHONHASHSEED"] = str(seed)
+
+    tf.keras.utils.set_random_seed(seed)
+
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)  # type: ignore
+    torch.backends.cudnn.deterministic = True  # type: ignore
+    torch.backends.cudnn.benchmark = True  # type: ignore
