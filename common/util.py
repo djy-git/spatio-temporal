@@ -68,12 +68,7 @@ def set_random_seed(seed):
     """
     import tensorflow as tf
     import torch
-
-    random.seed(seed)
-    np.random.seed(seed)
-    sklearn.random.seed(RANDOM_STATE)
     os.environ["PYTHONHASHSEED"] = str(seed)
-
     tf.keras.utils.set_random_seed(seed)
 
     torch.manual_seed(seed)
