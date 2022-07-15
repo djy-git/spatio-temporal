@@ -345,3 +345,26 @@ Accuracy:  56.4644%
  --- Overall Score --- 
 	367.07639868761885
 ```
+
+
+# 17. [proposed17-BN.ipynb](proposed/proposed17-BN.ipynb)
+**proposed16** 에서 다음을 추가
+
+## Model
+- [Transformer](https://keras.io/examples/timeseries/timeseries_transformer_classification/) 사용
+- Input 직후, `BatchNormalization()` 추가
+
+![](assets/proposed17-BN_learning_curve.png)
+![](assets/proposed17-BN_training_result.png)
+
+```
+ File Name : 
+	proposed17-BN.csv
+
+Accuracy:  60.2466%
+
+ 	 RMSE: 375.23501836364164, MAE: 279.8426663328266
+
+ --- Overall Score --- 
+	327.5388423482341
+```
