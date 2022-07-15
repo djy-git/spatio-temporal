@@ -87,7 +87,7 @@ def impute_data(data, threshold=6*12):
     check_nan(data_imp, "Imputing")
     return data_imp
 
-def preprocess(data):
+def feature_engineering(data):
     """Add features with feature engineering
 
     Parameters
@@ -222,15 +222,15 @@ def smooth(data, target, window_length=11, polyorder=3):
 
     Returns
     -------
-    data_smooth : pandas.DataFrame
+    data_sm : pandas.DataFrame
     """
     from scipy.signal import savgol_filter
 
-    data_smooth = copy(data)
-    data_smooth = marking_data(data_smooth, None)  # Except anomaly from computations
-    data_smooth = data_smooth.interpolate()        # Alleviate anomaly impact
-    for turbID in data_smooth['TurbID'].unique():
-        data_tid = data_smooth[data_smooth['TurbID'] == turbID]
-        data_tid[target] = savgol_filter(data_tid[target], window_length, polyorder)
-    check_nan(data_smooth, "Smoothing")
-    return data_smooth
+    data = copy(data)
+    data_mark = marking_data(data, None)  # Except anomaly from computations
+    data_sm = data_mark.interpolate()        # Alleviate anomaly impact
+    for turbID in data_sm['TurbID'].unique():
+        data_tid = data_sm[data_sm['TurbID'] == turbID]
+        data_sm.loc[data_tid.index, target] = savgol_filter(data_tid[target], window_length, polyorder)
+    check_nan(data_sm, "Smoothing")
+    return data_sm
