@@ -22,10 +22,18 @@ def generate_dataset(X, y=None, batch_size=32, shuffle=False):
     """
     import tensorflow as tf
 
+    # 1. Convert dtype to float32
+    X = np.array(X, dtype=np.float32)
+    if y is not None:
+        y = np.array(y, dtype=np.float32)
+
+    # 2. Generate TensorFlow dataset
     if y is None:
         ds = tf.data.Dataset.from_tensor_slices(X)
     else:
         ds = tf.data.Dataset.from_tensor_slices((X, y))
+
+    # 3. Options
     if shuffle:
         ds = ds.shuffle(buffer_size=1000)
     return ds.batch(batch_size).cache().prefetch(tf.data.AUTOTUNE)
@@ -83,15 +91,15 @@ def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, tes
 
     Returns
     -------
-    train_x : numpy.ndArray
+    train_x : list of pandas.DataFrame
         Input data of training set
-    train_y : numpy.ndArray
+    train_y : list of pandas.DataFrame
         Output data of training set
-    val_x : numpy.ndArray
+    val_x : list of pandas.DataFrame
         Input data of validation set
-    val_y : numpy.ndArray
+    val_y : list of pandas.DataFrame
         Output data of validation set
-    test_x : numpy.ndArray
+    test_x : list of pandas.DataFrame
         Input data of test set
     """
     from sklearn.model_selection import train_test_split
@@ -112,17 +120,14 @@ def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, tes
         else:
             train_in, val_in, train_out, val_out = inputs, [], outputs, []
 
-        train_x += [data_tid.loc[times].values for times in train_in]
-        train_y += [data_tid.loc[times].values for times in train_out]
-        val_x   += [data_tid.loc[times].values for times in val_in]
-        val_y   += [data_tid.loc[times].values for times in val_out]
-        test_x  += [data_tid.iloc[-in_seq_len:].values]
+        train_x += [data_tid.loc[times] for times in train_in]
+        train_y += [data_tid.loc[times] for times in train_out]
+        val_x   += [data_tid.loc[times] for times in val_in]
+        val_y   += [data_tid.loc[times] for times in val_out]
+        test_x  += [data_tid.iloc[-in_seq_len:]]
 
-    train_x, train_y = np.array(train_x, dtype=np.float32), np.array(train_y, dtype=np.float32)
-    val_x,   val_y   = np.array(val_x,   dtype=np.float32), np.array(val_y,   dtype=np.float32)
-    test_x           = np.array(test_x,  dtype=np.float32)
-
-    print("Train data(X, y)     :", train_x.shape, train_y.shape)
-    print("Validation data(X, y):", val_x.shape,   val_y.shape)
-    print("Test data(X)         :", test_x.shape)
+    print("Data Split")
+    print("- Train data(X, y)     :", np.shape(train_x), np.shape(train_y))
+    print("- Validation data(X, y):", np.shape(val_x),   np.shape(val_y))
+    print("- Test data(X)         :", np.shape(test_x))
     return train_x, train_y, val_x, val_y, test_x
