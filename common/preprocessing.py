@@ -34,6 +34,7 @@ def generate_full_timestamp(data, drop=False):
     return data
 
 def marking_data(data, marking_value_target):
+    data = copy(data)
     cond = (data['Patv'] <= 0) & (data['Wspd'] > 2.5) | \
            (data['Pab1'] > 89) | (data['Pab2'] > 89) | (data['Pab3'] > 89) | \
            (data['Wdir'] < -180) | (data['Wdir'] > 180) | (data['Ndir'] < -720) | (data['Ndir'] > 720) | \
@@ -42,9 +43,9 @@ def marking_data(data, marking_value_target):
     data['Patv'].iloc[indices] = marking_value_target
     return data
 
-def impute_data(data):
+def impute_data(data, threshold=6*12):
     """Impute data
-    1. Drop continuous missing rows
+    1. Drop continuous missing rows (more than threshold)
     2. Fill missing rows with backward values using threshold
     3. Interpolation
 
@@ -53,25 +54,41 @@ def impute_data(data):
     data : pandas.DataFrame
         Input data
 
+    threshold : int (optional)
+        Threshold of continuous missing values
+
     Returns
     -------
-    data : pandas.DataFrame
+    data_imp : pandas.DataFrame
         Imputed data
     """
-    data = data[~data['Day'].isin([65, 66, 67])]
-    bfill_cols = ['Wspd', 'Wdir', 'Etmp', 'Itmp', 'Ndir', 'Pab1', 'Pab2', 'Pab3', 'Prtv', 'Patv']
+    data_imp = pd.DataFrame()
     for turbID in data['TurbID'].unique():
         data_tid = data[data['TurbID'] == turbID]
-        first_id = data_tid.index[0]
-        if data.loc[first_id].isna().any():
-           data.loc[first_id, bfill_cols] = data.loc[first_id+1, bfill_cols]
-    data = data.interpolate()
-    print("Number of Nan values:", sum(data.isna().sum(axis='columns') > 0))
-    return data
+        idxs = (data_tid.isna().sum(axis='columns') > 0)
+        idxs_nan = idxs[idxs].index
+        idxs_removed = []
+
+        s, e = 0, 1
+        while e < len(idxs_nan):
+            cur = idxs_nan[s:e]
+            if idxs_nan[e] == cur[-1] + 1:
+                e += 1
+            else:
+                if len(cur) >= threshold:
+                    idxs_removed += list(cur)
+                s = e
+                e = s + 1
+        else:
+            if len(cur) >= threshold:
+                idxs_removed += list(cur)
+        data_tid_imp = data_tid.drop(idxs_removed).interpolate().fillna(method='bfill')
+        data_imp = data_imp.append(data_tid_imp)
+    check_nan(data_imp, "Imputing")
+    return data_imp
 
 def preprocess(data):
-    """Preprocess data
-    Add features with feature engineering
+    """Add features with feature engineering
 
     Parameters
     ----------
@@ -187,4 +204,33 @@ def select_features(data, threshold=0.4):
     """
     corr = data.corr()['Patv'].sort_values()
     corr_abs = corr.abs().sort_values()
-    return ['TurbID', 'Time'] + list(corr_abs[corr_abs > threshold].index)
+    return corr_abs[corr_abs > threshold].index
+
+def smooth(data, target, window_length=11, polyorder=3):
+    """Smooth target using [Savitzky-Golay filter](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.savgol_filter.html)
+
+    Parameter
+    ---------
+    data : pandas.DataFrame
+        Input data
+    target : str
+        Smoothing feature
+    window_length : int (optional)
+        Window length for smoothing (the bigger, the smoother)
+    polyorder : int (optional)
+        Order of prediction function for smoothing (the bigger, the smoother)
+
+    Returns
+    -------
+    data_smooth : pandas.DataFrame
+    """
+    from scipy.signal import savgol_filter
+
+    data_smooth = copy(data)
+    data_smooth = marking_data(data_smooth, None)  # Except anomaly from computations
+    data_smooth = data_smooth.interpolate()        # Alleviate anomaly impact
+    for turbID in data_smooth['TurbID'].unique():
+        data_tid = data_smooth[data_smooth['TurbID'] == turbID]
+        data_tid[target] = savgol_filter(data_tid[target], window_length, polyorder)
+    check_nan(data_smooth, "Smoothing")
+    return data_smooth
