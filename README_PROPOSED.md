@@ -270,7 +270,7 @@ input, output
 ## Model
 - `proposed12.ipynb`와 동일
 
-# 13. [proposed14.ipynb](proposed/proposed14.ipynb)
+# 14. [proposed14.ipynb](proposed/proposed14.ipynb)
 ## Data
 marking abnormals to Zero
 features = ['TurbID','Day', 'WspdY_abs', 'Itmp', 'WdirX', 'WspdX_abs', 'Patan', 'Prtv', 'TSR', 'Pab', 'P_max', 'Wspd_cube', 'Wspd', 'WspdX', 'RPM', 'Papt', 'Patv']
@@ -282,3 +282,15 @@ features = ['TurbID','Day', 'WspdY_abs', 'Itmp', 'WdirX', 'WspdX_abs', 'Patan', 
 
   RMSE: 399.5539085862987, MAE: 300.3371543627951
 --- Overall Score --- 349.9455314745469
+
+
+# 15. [proposed15.ipynb](proposed/proposed15.ipynb)
+## Data
+marking abnormals to Zero
+features = ['TurbID','Day','RPM', 'Bspd1', 'Bspd3', 'Bspd2', 'WspdX', 'Wspd', 'Wspd_cube',
+       'P_max', 'Pab1', 'Pab2', 'Pab3', 'TSR1', 'TSR2', 'TSR3', 'Prtv','Patv']
+## Model
+- transformer 사용
+
+![img.png](assets/proposed15_loss_plot.png)
+
