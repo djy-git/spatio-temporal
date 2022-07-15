@@ -277,3 +277,8 @@ features = ['TurbID','Day', 'WspdY_abs', 'Itmp', 'WdirX', 'WspdX_abs', 'Patan', 
 
 ## Model
 - `proposed11.ipynb`와 동일
+- 
+ Accuracy: 55.0360%
+
+  RMSE: 399.5539085862987, MAE: 300.3371543627951
+--- Overall Score --- 349.9455314745469
