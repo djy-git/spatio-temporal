@@ -145,10 +145,10 @@ def feature_engineering(data):
     temp['WspdY_abs'] = temp['Wspd'] * np.sin(temp['Wdir_adj'])
 
     # TSR(Tip speed Ratio)
-    alpha = 20
-    temp['TSR1'] = 1 / np.tan(np.radians(temp['Pab1'] + alpha))
-    temp['TSR2'] = 1 / np.tan(np.radians(temp['Pab2'] + alpha))
-    temp['TSR3'] = 1 / np.tan(np.radians(temp['Pab3'] + alpha))
+    alpha = 39
+    temp['TSR1'] = 1 / np.tan(np.radians((temp['Pab1'] + alpha).apply(lambda x:min(x,90))))
+    temp['TSR2'] = 1 / np.tan(np.radians((temp['Pab2'] + alpha).apply(lambda x:min(x,90))))
+    temp['TSR3'] = 1 / np.tan(np.radians((temp['Pab3'] + alpha).apply(lambda x:min(x,90))))
 
     temp['Bspd1'] = temp['TSR1'] * temp['WspdX']
     temp['Bspd2'] = temp['TSR2'] * temp['WspdX']
