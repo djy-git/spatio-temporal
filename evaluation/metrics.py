@@ -270,7 +270,7 @@ class CondLoss(tf.keras.losses.Loss):
         y_true = tf.reshape(y_true, (-1, D))
         y_pred = tf.reshape(y_pred, (-1, D))
 
-        idxs_valid = (y_pred[:, -1] != self.marked_target_value)
+        idxs_valid = (y_true[:, -1] != self.marked_target_value)
         y_true_valid, y_pred_valid = y_true[idxs_valid], y_pred[idxs_valid]
         error = y_true_valid - y_pred_valid
         if self.loss_fn == 'rmse':
