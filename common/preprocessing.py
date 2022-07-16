@@ -166,13 +166,9 @@ def feature_engineering(data):
     # temp.drop(['TSR1','TSR2','TSR3','Bspd1','Bspd2','Bspd3'], axis=1, inplace=True)
 
     # Maximum power from wind
+    C = 603.39
     temp['Wspd_cube'] = (temp['WspdX']) ** 3
-    temp['C'] = temp['Patv']/temp['Wspd_cube'] * temp['Etmp_abs']
-    temp['Pmax'] = temp['Wspd_cube'] / temp['Etmp_abs']
-    C = temp.groupby(['TurbID']).mean()['C'].to_list()
-    for i, c in enumerate(C):
-        cond = temp['TurbID'] == (i+1)
-        temp.loc[cond,'Pmax'] = temp[cond]['Pmax']*c
+    temp['Pmax'] = temp['Wspd_cube'] / temp['Etmp_abs']*C
 
     # temp['Pmax'] = temp['Pmax'].apply(lambda x:min(x,1550))
 
