@@ -1,5 +1,5 @@
 from common.util import *
-
+from scipy.signal import savgol_filter
 
 def generate_full_timestamp(data, drop=False):
     """Generate not duplicated time series index
@@ -148,10 +148,10 @@ def feature_engineering(data):
     temp['WspdY_abs'] = temp['Wspd'] * np.sin(temp['Wdir_adj'])
 
     # TSR(Tip speed Ratio)
-    alpha = 39
-    temp['TSR1'] = 1 / np.tan(np.radians((temp['Pab1'] + alpha).apply(lambda x:min(x,90))))
-    temp['TSR2'] = 1 / np.tan(np.radians((temp['Pab2'] + alpha).apply(lambda x:min(x,90))))
-    temp['TSR3'] = 1 / np.tan(np.radians((temp['Pab3'] + alpha).apply(lambda x:min(x,90))))
+    alpha = 40
+    temp['TSR1'] = 1 / np.tan(np.radians((temp['Pab1'] + alpha).apply(lambda x:min(x,89)))).apply(lambda x:max(x,0))
+    temp['TSR2'] = 1 / np.tan(np.radians((temp['Pab2'] + alpha).apply(lambda x:min(x,89)))).apply(lambda x:max(x,0))
+    temp['TSR3'] = 1 / np.tan(np.radians((temp['Pab3'] + alpha).apply(lambda x:min(x,89)))).apply(lambda x:max(x,0))
 
     temp['Bspd1'] = temp['TSR1'] * temp['WspdX']
     temp['Bspd2'] = temp['TSR2'] * temp['WspdX']
@@ -251,3 +251,55 @@ def positional_encoding(seq_len, d, n=10000):
 def scale(data, scaler):
     data = np.array(data, dtype=np.float32)
     return scaler.transform(data.reshape(-1, data.shape[-1])).reshape(data.shape)
+
+# Outlier hander for multiple columns
+def outlier_handler(data, columns):
+    window_size = 2
+    for i in data['Day'].unique():
+        temp = data[(data['Day'] >= i)&(data['Day'] <= i+window_size-1)].copy()
+        print('Day ',i )
+        temp = drop_outliers(temp, columns)
+        temp = fill_gaps(temp, columns)
+        temp = curve_fit(temp, columns, window_length = 21, polyorder = 3)
+
+        data[(data['Day'] >= i)&(data['Day'] <= i+window_size-1)] = temp
+    return data
+
+def drop_outliers(data, columns):
+    temp = data.copy()
+    for column in columns:
+        temp[f'{column}_diff'] = temp[column].diff(1)
+        temp[f'{column}_diff'] = temp[column].diff(1)
+
+    q1 = pd.DataFrame(temp).quantile(0.25)
+    q3 = pd.DataFrame(temp).quantile(0.75)
+    iqr = q3 - q1  # Interquartile range
+    fence_low = q1 - (1.5 * iqr)
+    fence_high = q3 + (1.5 * iqr)
+
+    for column in columns:
+        print(
+            f"      {column} Fence High/Low ({fence_high[column]}/{fence_low[column]}), Count: {temp.loc[(temp[column] < fence_low[column]) | (temp[column] > fence_high[column]), column].count()}")
+        temp.loc[temp[column] > fence_high[column], column] = np.nan
+        temp.loc[temp[column] < fence_low[column], column] = np.nan
+        print(
+            f"      {f'{column}_diff'} Fence High/Low ({fence_high[f'{column}_diff']}/{fence_low[f'{column}_diff']}), Count: {temp.loc[(temp[f'{column}_diff'] < fence_low[f'{column}_diff']) | (temp[f'{column}_diff'] > fence_high[f'{column}_diff']), f'{column}_diff'].count()}")
+        temp.loc[temp[f'{column}_diff'] > fence_high[f'{column}_diff'], column] = np.nan
+        temp.loc[temp[f'{column}_diff'] < fence_low[f'{column}_diff'], column] = np.nan
+        temp.drop([f'{column}_diff'], axis=1, inplace=True)
+    return temp
+
+
+def fill_gaps(data, columns):
+    temp = data.copy()
+    for column in columns:
+        temp[column] = temp[column].interpolate()
+        temp[column] = temp[column].fillna(method='bfill')
+    return temp
+
+
+def curve_fit(data, columns, window_length=21, polyorder=3):
+    temp = data.copy()
+    for column in columns:
+        temp[column] = savgol_filter(temp[column], window_length, polyorder)
+    return temp
