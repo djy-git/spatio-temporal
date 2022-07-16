@@ -253,14 +253,14 @@ def scale(data, scaler):
     return scaler.transform(data.reshape(-1, data.shape[-1])).reshape(data.shape)
 
 # Outlier hander for multiple columns
-def outlier_handler(data, columns):
+def outlier_handler(data, columns, window_length = 21, polyorder = 3):
     window_size = 2
     for i in data['Day'].unique():
         temp = data[(data['Day'] >= i)&(data['Day'] <= i+window_size-1)].copy()
         print('Day ',i )
         temp = drop_outliers(temp, columns)
         temp = fill_gaps(temp, columns)
-        temp = curve_fit(temp, columns, window_length = 21, polyorder = 3)
+        temp = curve_fit(temp, columns, window_length = window_length, polyorder = polyorder)
 
         data[(data['Day'] >= i)&(data['Day'] <= i+window_size-1)] = temp
     return data
