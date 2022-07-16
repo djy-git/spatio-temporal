@@ -128,6 +128,10 @@ def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, tes
         val_y   += [data_tid.loc[times] for times in val_out]
         test_x  += [data_tid.iloc[-in_seq_len:]]
 
+    train_x, train_y = np.array(train_x, dtype=np.float32), np.array(train_y, dtype=np.float32)
+    val_x, val_y = np.array(val_x, dtype=np.float32), np.array(val_y, dtype=np.float32)
+    test_x = np.array(test_x, dtype=np.float32)
+
     print("* Data Split")
     print("  - Train data(X, y)     :", np.shape(train_x), np.shape(train_y))
     print("  - Validation data(X, y):", np.shape(val_x),   np.shape(val_y))
