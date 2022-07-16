@@ -61,15 +61,26 @@ p, absolute pressure (Pa) \
 T, absolute temperature (K)
 
 해수면이라고 가정했을때 P = 101325 Pa \
-(4.81×10−26 in kg * 101325 Pa) / (1.380649×10−23 * (temperature in celsius + 273.15)\
-= 353/(temperature in celsius + 273.15) 
+1431.0 m or 4694.9 feet
+avg temp = 26
+85825.58 Pa
+Location :40.70900,96.28050
 
-Power (W) = 1/2 x 353/(t + 273.15) x 4649m² x v^3 x C 
+(4.81×10−26 in kg * 85825.58 Pa) / (1.380649×10−23 * (temperature in celsius + 273.15)\
+= 299/(temperature in celsius + 273.15) 
+
+Power (W) = 1/2 x 299/(t + 273.15) x 5398m² x v^3 x C 
+          = 807,001/(t + 273.15)x v^3 x C 
+
+Power(kW) = 807/(t + 273.15)x v**3 x C
 
 ### [터빈 종류 및 스펙](https://en.wind-turbine-models.com/turbines)
 ![](assets/patvMax.png)
 **Patv**의 최대값이 대략 1500KW,즉 **1.5MW**라고 볼 수 있다. \
-134개의 터빈이 있으므로 해당 wind farm은 **201MW**급이다. 
+134개의 터빈이 있으므로 해당 wind farm은 **201MW**급이다.
+
+[확실한 위치](https://www.gem.wiki/Gansu_Guazhou_Beidaqiao_3_wind_farm)
+[추가](https://globalenergymonitor.org/projects/global-wind-power-tracker/tracker-map/)
 
 134개의 1.5MW 터빈, 201MW급의 wind farm을 검색해보자. \
 [관련 기사](https://www.power-technology.com/marketdata/inner-mongolia-huitengxile-huadian-kulun-china/) \
