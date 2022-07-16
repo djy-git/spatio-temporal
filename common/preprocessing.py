@@ -166,11 +166,12 @@ def feature_engineering(data):
     # temp.drop(['TSR1','TSR2','TSR3','Bspd1','Bspd2','Bspd3'], axis=1, inplace=True)
 
     # Maximum power from wind
-    C = 603.39
-    temp['Wspd_cube'] = (temp['WspdX']) ** 3
-    temp['Pmax'] = temp['Wspd_cube'] / temp['Etmp_abs']*C
-
-    # temp['Pmax'] = temp['Pmax'].apply(lambda x:min(x,1550))
+    temp['Wspd_cube'] = temp['WspdX'] ** 3
+    for turbID, C in get_power_constant(temp).items():
+        temp.loc[temp['TurbID'] == turbID, 'C'] = C
+    temp['Pmax'] = temp['C'] * (temp['Wspd_cube'] / temp['Etmp_abs'])
+    temp['Pmax'] = temp['Pmax'].clip(min(temp['Patv']), max(temp['Patv']))
+    temp.drop(columns=['C'], inplace=True)
 
     # Apparent power, Power arctangent
     temp['Papt'] = np.sqrt(temp['Prtv'] ** 2 + temp['Patv'] ** 2)
@@ -255,20 +256,21 @@ def scale(data, scaler):
     data = np.array(data, dtype=np.float32)
     return scaler.transform(data.reshape(-1, data.shape[-1])).reshape(data.shape)
 
-# Outlier hander for multiple columns
-def outlier_handler(data, columns, window_length = 21, polyorder = 3):
+# Outlier handler for multiple columns
+def outlier_handler(data, columns, window_length = 21, polyorder = 3, verbose=False):
     window_size = 2
     for i in data['Day'].unique():
         temp = data[(data['Day'] >= i)&(data['Day'] <= i+window_size-1)].copy()
-        print('Day ',i )
-        temp = drop_outliers(temp, columns)
+        if verbose:
+            print('Day ', i)
+        temp = drop_outliers(temp, columns, verbose)
         temp = fill_gaps(temp, columns)
         temp = curve_fit(temp, columns, window_length = window_length, polyorder = polyorder)
 
         data[(data['Day'] >= i)&(data['Day'] <= i+window_size-1)] = temp
     return data
 
-def drop_outliers(data, columns):
+def drop_outliers(data, columns, verbose=False):
     temp = data.copy()
     for column in columns:
         temp[f'{column}_diff'] = temp[column].diff(1)
@@ -281,17 +283,18 @@ def drop_outliers(data, columns):
     fence_high = q3 + (1.5 * iqr)
 
     for column in columns:
-        print(
-            f"      {column} Fence High/Low ({fence_high[column]}/{fence_low[column]}), Count: {temp.loc[(temp[column] < fence_low[column]) | (temp[column] > fence_high[column]), column].count()}")
+        if verbose:
+            print(
+                f"      {column} Fence High/Low ({fence_high[column]}/{fence_low[column]}), Count: {temp.loc[(temp[column] < fence_low[column]) | (temp[column] > fence_high[column]), column].count()}")
         temp.loc[temp[column] > fence_high[column], column] = np.nan
         temp.loc[temp[column] < fence_low[column], column] = np.nan
-        print(
-            f"      {f'{column}_diff'} Fence High/Low ({fence_high[f'{column}_diff']}/{fence_low[f'{column}_diff']}), Count: {temp.loc[(temp[f'{column}_diff'] < fence_low[f'{column}_diff']) | (temp[f'{column}_diff'] > fence_high[f'{column}_diff']), f'{column}_diff'].count()}")
+        if verbose:
+            print(
+                f"      {f'{column}_diff'} Fence High/Low ({fence_high[f'{column}_diff']}/{fence_low[f'{column}_diff']}), Count: {temp.loc[(temp[f'{column}_diff'] < fence_low[f'{column}_diff']) | (temp[f'{column}_diff'] > fence_high[f'{column}_diff']), f'{column}_diff'].count()}")
         temp.loc[temp[f'{column}_diff'] > fence_high[f'{column}_diff'], column] = np.nan
         temp.loc[temp[f'{column}_diff'] < fence_low[f'{column}_diff'], column] = np.nan
         temp.drop([f'{column}_diff'], axis=1, inplace=True)
     return temp
-
 
 def fill_gaps(data, columns):
     temp = data.copy()
@@ -300,9 +303,20 @@ def fill_gaps(data, columns):
         temp[column] = temp[column].fillna(method='bfill')
     return temp
 
-
 def curve_fit(data, columns, window_length=21, polyorder=3):
     temp = data.copy()
     for column in columns:
         temp[column] = savgol_filter(temp[column], window_length, polyorder)
     return temp
+
+def get_power_constant(data):
+    data = copy(data)
+    if 'Wspd_cube' not in data:
+        data['Wspd_cube'] = data['Wspd']**3
+    if 'Etmp_abs' not in data:
+        data['Etmp_abs'] = data['Etmp'] + 243.15
+    C = {turbID: None for turbID in data['TurbID'].unique()}
+    for turbID in data['TurbID'].unique():
+        d = data[data['TurbID'] == turbID]
+        C[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).mean()
+    return C
