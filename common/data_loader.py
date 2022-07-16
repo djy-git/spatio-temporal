@@ -1,4 +1,5 @@
 from common.util import *
+from common.preprocessing import generate_full_timestamp
 
 
 def generate_dataset(X, y=None, batch_size=32, shuffle=False):
@@ -107,6 +108,7 @@ def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, tes
     train_x, train_y = [], []
     val_x,   val_y   = [], []
     test_x           = []
+    data = generate_full_timestamp(data, drop=True)
 
     for i in tqdm(sorted(pd.unique(data['TurbID']))):
         data_tid = data[data['TurbID'] == i].drop(columns=['TurbID'])

@@ -30,7 +30,7 @@ def generate_full_timestamp(data, drop=False):
     # Time: Not duplicated timestamp
     data['Time'] = data['Time'].astype(np.int32)
     if drop:
-        data = data.drop(columns=['Day', 'Tmstamp'])
+        data = data.drop(columns=['Day', 'Tmstamp','Time_in_day'])
     return data
 
 def get_idxs_mark(data):
@@ -167,7 +167,14 @@ def feature_engineering(data):
 
     # Maximum power from wind
     temp['Wspd_cube'] = (temp['WspdX']) ** 3
-    temp['P_max'] = ((temp['Wspd']) ** 3) / temp['Etmp_abs']
+    temp['C'] = temp['Patv']/temp['Wspd_cube'] * temp['Etmp_abs']
+    temp['Pmax'] = temp['Wspd_cube'] / temp['Etmp_abs']
+    C = temp.groupby(['TurbID']).mean()['C'].to_list()
+    for i, c in enumerate(C):
+        cond = temp['TurbID'] == (i+1)
+        temp.loc[cond,'Pmax'] = temp[cond]['Pmax']*c
+
+    # temp['Pmax'] = temp['Pmax'].apply(lambda x:min(x,1550))
 
     # Apparent power, Power arctangent
     temp['Papt'] = np.sqrt(temp['Prtv'] ** 2 + temp['Patv'] ** 2)
