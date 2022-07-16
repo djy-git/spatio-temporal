@@ -64,7 +64,7 @@ T, absolute temperature (K)
 (4.81×10−26 in kg * 101325 Pa) / (1.380649×10−23 * (temperature in celsius + 273.15)\
 = 353/(temperature in celsius + 273.15) 
 
-Power (W) = 1/2 x 353/(t + 273.15) x A x v^3 x C 
+Power (W) = 1/2 x 353/(t + 273.15) x 4649m² x v^3 x C 
 
 ### [터빈 종류 및 스펙](https://en.wind-turbine-models.com/turbines)
 ![](assets/patvMax.png)
@@ -89,9 +89,10 @@ Rated wind speed: 10.5 m/s \
 
 후보 2. 
 [longyuan](https://www.power-technology.com/marketdata/inner-mongolia-baotou-bayin-wind-farm-china/)
-[report](https://www1.hkexnews.hk/listedco/listconews/sehk/2009/1127/00916/ewplongy-20091120-24.pdf)
-[project report](https://cdm.unfccc.int/filestorage/Y/L/X/YLXDH8W92UC1QZATBVK50OEF346GI7/pdd.pdf?t=WE98cmVwa3lzfDBpHDUyC4ZBKeKpdQH7RcBp)
 
+[report](https://www1.hkexnews.hk/listedco/listconews/sehk/2009/1127/00916/ewplongy-20091120-24.pdf) \
+[project report](https://cdm.unfccc.int/filestorage/Y/L/X/YLXDH8W92UC1QZATBVK50OEF346GI7/pdd.pdf?t=WE98cmVwa3lzfDBpHDUyC4ZBKeKpdQH7RcBp) \
+[gw 1.5/77](https://www.goldwindamericas.com/sites/default/files/Goldwind-Brochure-1.5-Web.pdf)
 
 [다른 후보](https://www.deif.com/wind-power/cases/retrofit-md77-for-dongfang/)
 [3번 Minensota](https://mn.gov/eera/web/project-file/11688/))
