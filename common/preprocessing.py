@@ -33,13 +33,16 @@ def generate_full_timestamp(data, drop=False):
         data = data.drop(columns=['Day', 'Tmstamp'])
     return data
 
-def marking_data(data, marking_value_target):
-    data = copy(data)
+def get_idxs_mark(data):
     cond = (data['Patv'] <= 0) & (data['Wspd'] > 2.5) | \
            (data['Pab1'] > 89) | (data['Pab2'] > 89) | (data['Pab3'] > 89) | \
            (data['Wdir'] < -180) | (data['Wdir'] > 180) | (data['Ndir'] < -720) | (data['Ndir'] > 720) | \
            (data['Patv'].isnull())
-    indices = np.where(cond)
+    return np.where(cond)[0]
+
+def marking_data(data, marking_value_target):
+    data = copy(data)
+    indices = get_idxs_mark(data)
     data['Patv'].iloc[indices] = marking_value_target
     return data
 
@@ -226,11 +229,25 @@ def smooth(data, target, window_length=11, polyorder=3):
     """
     from scipy.signal import savgol_filter
 
-    data = copy(data)
-    data_mark = marking_data(data, None)  # Except anomaly from computations
-    data_sm = data_mark.interpolate()        # Alleviate anomaly impact
+    data_mark = copy(data)
+    data_mark = marking_data(data_mark, None)  # Except anomaly from computations
+
+    data_sm = data_mark.interpolate()  # Alleviate anomaly impact
     for turbID in data_sm['TurbID'].unique():
         data_tid = data_sm[data_sm['TurbID'] == turbID]
         data_sm.loc[data_tid.index, target] = savgol_filter(data_tid[target], window_length, polyorder)
     check_nan(data_sm, "Smoothing")
     return data_sm
+
+def positional_encoding(seq_len, d, n=10000):
+    P = np.zeros((seq_len, d))
+    for k in range(seq_len):
+        for i in np.arange(d//2):
+            denom = np.power(n, 2*i/d)
+            P[k, 2*i]   = np.sin(k/denom)
+            P[k, 2*i+1] = np.cos(k/denom)
+    return P
+
+def scale(data, scaler):
+    data = np.array(data, dtype=np.float32)
+    return scaler.transform(data.reshape(-1, data.shape[-1])).reshape(data.shape)
