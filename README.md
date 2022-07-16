@@ -72,6 +72,7 @@ Location :40.70900,96.28050
 Power (W) = 1/2 x 299/(t + 273.15) x 5398m² x v^3 x C 
           = 807,001/(t + 273.15)x v^3 x C 
 
+
 Power(kW) = 807/(t + 273.15)x v**3 x C
 
 ### [터빈 종류 및 스펙](https://en.wind-turbine-models.com/turbines)
