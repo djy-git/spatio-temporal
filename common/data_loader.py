@@ -72,7 +72,7 @@ def split_times(times, in_seq_len, out_seq_len, stride):
             inputs.append(input);  outputs.append(output)
     return inputs, outputs
 
-def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, test_size):
+def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, test_size, return_numpy=False):
     """Generate train, validation, test dataset
 
     Parameters
@@ -89,18 +89,20 @@ def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, tes
         Whether to shuffle data
     test_size : int or float
         Number(int) or ratio(float) of test data
+    return_numpy : bool
+        Whether to return numpy array
 
     Returns
     -------
-    train_x : list of pandas.DataFrame
+    train_x : list of pandas.DataFrame or numpy.ndArray
         Input data of training set
-    train_y : list of pandas.DataFrame
+    train_y : list of pandas.DataFrame or numpy.ndArray
         Output data of training set
-    val_x : list of pandas.DataFrame
+    val_x : list of pandas.DataFrame or numpy.ndArray
         Input data of validation set
-    val_y : list of pandas.DataFrame
+    val_y : list of pandas.DataFrame or numpy.ndArray
         Output data of validation set
-    test_x : list of pandas.DataFrame
+    test_x : list of pandas.DataFrame or numpy.ndArray
         Input data of test set
     """
     from sklearn.model_selection import train_test_split
@@ -128,9 +130,10 @@ def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, tes
         val_y   += [data_tid.loc[times] for times in val_out]
         test_x  += [data_tid.iloc[-in_seq_len:]]
 
-    train_x, train_y = np.array(train_x, dtype=np.float32), np.array(train_y, dtype=np.float32)
-    val_x, val_y = np.array(val_x, dtype=np.float32), np.array(val_y, dtype=np.float32)
-    test_x = np.array(test_x, dtype=np.float32)
+    if return_numpy:
+        train_x, train_y = np.array(train_x, dtype=np.float32), np.array(train_y, dtype=np.float32)
+        val_x, val_y     = np.array(val_x, dtype=np.float32), np.array(val_y, dtype=np.float32)
+        test_x           = np.array(test_x, dtype=np.float32)
 
     print("* Data Split")
     print("  - Train data(X, y)     :", np.shape(train_x), np.shape(train_y))
