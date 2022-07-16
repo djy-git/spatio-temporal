@@ -397,3 +397,36 @@ Accuracy:  56.4644%
      --- Overall Score --- 
         442.7420512813194
     ```
+
+
+# 18. [proposed18.ipynb](proposed/proposed18.ipynb)
+**proposed17** 에서 다음을 추가
+
+## Data
+- `MinMaxScaler` 적용
+- `position_encoding()` 적용
+- Anomaly marking 적용
+
+## Model
+- Parameter
+    ```
+    head_size=32, num_heads=32, ff_dim=32, num_transformer_blocks=16, mlp_units=[128]
+    ```
+
+## Training
+- Overfitting을 위해 validation set 사용 X
+
+![](assets/proposed18_learning_curve.png) 
+![](assets/proposed18_training_result.png) 
+
+```
+ File Name : 
+	proposed18.csv
+
+Accuracy:  32.2599%
+
+ 	 RMSE: 583.0144026773515, MAE: 447.17038576125105
+
+ --- Overall Score --- 
+	515.0923942193012
+```
