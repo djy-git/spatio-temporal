@@ -75,11 +75,12 @@ def set_random_seed(seed):
     torch.backends.cudnn.deterministic = True  # type: ignore
     torch.backends.cudnn.benchmark = True  # type: ignore
 
-def visualize_result(y_true, y_pred, n_rows=15, n_cols=15):
+def visualize_result(y_true, y_pred, n_rows=15, n_cols=15, ylim=None):
     fig, axes = plt.subplots(n_rows, n_cols, figsize=(40, 20))
-    idxs = np.random.choice(len(y_true), len(axes.flatten()))
+    # idxs = np.random.choice(len(y_true), len(axes.flatten()))
+    idxs = np.arange(n_rows * n_cols)
     for idx, ax in zip(idxs, axes.flatten()):
-        pd.DataFrame({'true': y_true[idx], 'pred': y_pred[idx]}).plot(ax=ax, ylim=[-100, 2000])
+        pd.DataFrame({'true': y_true[idx], 'pred': y_pred[idx]}).plot(ax=ax, ylim=ylim)
         ax.set_xticklabels([])
-        ax.set_yticklabels([])
+        # ax.set_yticklabels([])
     fig.tight_layout()
