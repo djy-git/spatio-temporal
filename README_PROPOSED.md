@@ -430,3 +430,18 @@ Accuracy:  32.2599%
  --- Overall Score --- 
 	515.0923942193012
 ```
+
+
+# 19. [proposed19-use_all_features.ipynb](proposed/proposed19-use_all_features.ipynb)
+## Data
+    ```
+    impute_data()
+    outlier_handler(['Etmp', 'Itmp', 'Wspd'])
+    feature_engineering()
+    select_features()
+    MinMaxScaling()
+    Set Patv of X to zero
+    ```
+
+## Model
+- GRU-Model
