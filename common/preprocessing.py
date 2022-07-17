@@ -30,8 +30,9 @@ def generate_full_timestamp(data, drop=False):
     # Time: Not duplicated timestamp
     data['Time'] = data['Time'].astype(np.int32)
     if drop:
-        data = data.drop(columns=['Day', 'Tmstamp','Time_in_day'])
+        data = data.drop(columns=['Day', 'Tmstamp', 'Time_in_day'])
     return data
+
 
 def get_idxs_mark(data):
     cond = (data['Patv'] <= 0) & (data['Wspd'] > 2.5) | \
@@ -40,13 +41,15 @@ def get_idxs_mark(data):
            (data['Patv'].isnull())
     return np.where(cond)[0]
 
+
 def marking_data(data, marking_value_target):
     data = copy(data)
     indices = get_idxs_mark(data)
     data['Patv'].iloc[indices] = marking_value_target
     return data
 
-def impute_data(data, threshold=6*12):
+
+def impute_data(data, threshold=6 * 12):
     """Impute data
     1. Drop continuous missing rows (more than threshold)
     2. Fill missing rows with backward values using threshold
@@ -90,6 +93,7 @@ def impute_data(data, threshold=6*12):
     check_nan(data_imp, "Imputing")
     return data_imp
 
+
 def feature_engineering(data, use_turbID=False):
     """Add features with feature engineering
 
@@ -112,6 +116,10 @@ def feature_engineering(data, use_turbID=False):
         temp = temp.join(bin_enc)
 
     location_data = pd.read_csv(join(PATH.input, "turb_location.csv")).set_index('TurbID')
+    x_grid = np.linspace(0, 5000, 6)
+    y_grid = np.linspace(0, 12000, 25)
+    location_data['x'] = location_data['x'].apply(lambda x: x_grid[abs(x_grid - x).argsort()[0]])
+    location_data['y'] = location_data['y'].apply(lambda y: y_grid[abs(y_grid - y).argsort()[0]])
     location_dict = location_data.to_dict('index')
     temp['locX'] = temp['TurbID'].apply(lambda x: location_dict[x]['x'])
     temp['locY'] = temp['TurbID'].apply(lambda y: location_dict[y]['y'])
@@ -131,12 +139,12 @@ def feature_engineering(data, use_turbID=False):
 
     # Wind absolute direction adjusted Wdir + Ndir
     temp['Wdir_adj'] = temp['Wdir'] + temp['Ndir']
-    temp['Wdir_cos'] = np.cos(temp['Wdir_adj']/180*np.pi)
-    temp['Wdir_sin'] = np.sin(temp['Wdir_adj']/180*np.pi)
+    temp['Wdir_cos'] = np.cos(temp['Wdir_adj'] / 180 * np.pi)
+    temp['Wdir_sin'] = np.sin(temp['Wdir_adj'] / 180 * np.pi)
 
     # Nacelle Direction cosine sine
-    temp['Ndir_cos'] = np.cos(temp['Ndir']/180*np.pi)
-    temp['Ndir_sin'] = np.sin(temp['Ndir']/180*np.pi)
+    temp['Ndir_cos'] = np.cos(temp['Ndir'] / 180 * np.pi)
+    temp['Ndir_sin'] = np.sin(temp['Ndir'] / 180 * np.pi)
     temp['Wdir_adj'] = np.radians(temp['Wdir'] + temp['Ndir'])
     temp['WdirX'] = np.cos(temp['Wdir_adj'])
     temp['WdirY'] = np.sin(temp['Wdir_adj'])
@@ -155,16 +163,16 @@ def feature_engineering(data, use_turbID=False):
 
     # TSR(Tip speed Ratio)
     alpha = 40
-    temp['TSR1'] = 1 / np.tan(np.radians((temp['Pab1'] + alpha).apply(lambda x:min(x,89)))).apply(lambda x:max(x,0))
-    temp['TSR2'] = 1 / np.tan(np.radians((temp['Pab2'] + alpha).apply(lambda x:min(x,89)))).apply(lambda x:max(x,0))
-    temp['TSR3'] = 1 / np.tan(np.radians((temp['Pab3'] + alpha).apply(lambda x:min(x,89)))).apply(lambda x:max(x,0))
+    temp['TSR1'] = 1 / np.tan(np.radians((temp['Pab1'] + alpha).apply(lambda x: min(x, 89)))).apply(lambda x: max(x, 0))
+    temp['TSR2'] = 1 / np.tan(np.radians((temp['Pab2'] + alpha).apply(lambda x: min(x, 89)))).apply(lambda x: max(x, 0))
+    temp['TSR3'] = 1 / np.tan(np.radians((temp['Pab3'] + alpha).apply(lambda x: min(x, 89)))).apply(lambda x: max(x, 0))
 
     temp['Bspd1'] = temp['TSR1'] * temp['WspdX']
     temp['Bspd2'] = temp['TSR2'] * temp['WspdX']
     temp['Bspd3'] = temp['TSR3'] * temp['WspdX']
 
     # RPM derived from blade speed
-    temp['RPM'] = ((temp['Bspd1']+temp['Bspd2']+temp['Bspd3'])/3)
+    temp['RPM'] = ((temp['Bspd1'] + temp['Bspd2'] + temp['Bspd3']) / 3)
 
     temp['Pab'] = ((temp['Pab1'] + temp['Pab2'] + temp['Pab3']) / 3)
     temp['RPM'] = ((temp['Bspd1'] + temp['Bspd2'] + temp['Bspd3']) / 3)
@@ -177,7 +185,7 @@ def feature_engineering(data, use_turbID=False):
         temp.loc[temp['TurbID'] == turbID, 'C'] = C
     temp['Pmax'] = temp['C'] * (temp['Wspd_cube'] / temp['Etmp_abs'])
     temp['Pmax'] = temp['Pmax'].clip(min(temp['Patv']), max(temp['Patv']))
-    temp.drop(columns=['C'], inplace=True)
+    # temp.drop(columns=['C'], inplace=True)
 
     # Apparent power, Power arctangent
     temp['Papt'] = np.sqrt(temp['Prtv'] ** 2 + temp['Patv'] ** 2)
@@ -202,6 +210,7 @@ def feature_engineering(data, use_turbID=False):
     check_nan(temp, "Feature engineering")
     return temp
 
+
 def select_features(data, threshold=0.4):
     """Select features which has correlations with Patv more than threshold
 
@@ -220,6 +229,7 @@ def select_features(data, threshold=0.4):
     corr = data.corr()['Patv'].sort_values()
     corr_abs = corr.abs().sort_values()
     return corr_abs[corr_abs > threshold].index
+
 
 def smooth(data, target, window_length=11, polyorder=3):
     """Smooth target using [Savitzky-Golay filter](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.savgol_filter.html)
@@ -251,32 +261,35 @@ def smooth(data, target, window_length=11, polyorder=3):
     check_nan(data_sm, "Smoothing")
     return data_sm
 
+
 def positional_encoding(seq_len, d, n=10000):
     P = np.zeros((seq_len, d))
     for k in range(seq_len):
-        for i in np.arange(d//2):
-            denom = np.power(n, 2*i/d)
-            P[k, 2*i]   = np.sin(k/denom)
-            P[k, 2*i+1] = np.cos(k/denom)
+        for i in np.arange(d // 2):
+            denom = np.power(n, 2 * i / d)
+            P[k, 2 * i] = np.sin(k / denom)
+            P[k, 2 * i + 1] = np.cos(k / denom)
     return P
+
 
 def scale(data, scaler):
     data = np.array(data, dtype=np.float32)
     return scaler.transform(data.reshape(-1, data.shape[-1])).reshape(data.shape)
 
+
 # Outlier handler for multiple columns
-def outlier_handler(data, columns, window_length = 21, polyorder = 3, verbose=False, smooth=False):
+def outlier_handler(data, columns, window_length=21, polyorder=3, verbose=False, smooth=False):
     data = data.copy()
     window_size = 2
     for i in data['Day'].unique():
-        temp = data[(data['Day'] >= i)&(data['Day'] <= i+window_size-1)].copy()
+        temp = data[(data['Day'] >= i) & (data['Day'] <= i + window_size - 1)].copy()
         if verbose:
             print('Day ', i)
         temp = drop_outliers(temp, columns, verbose)
         temp = fill_gaps(temp, columns)
         if smooth:
-            temp = curve_fit(temp, columns, window_length = window_length, polyorder = polyorder)
-        data[(data['Day'] >= i)&(data['Day'] <= i+window_size-1)] = temp
+            temp = curve_fit(temp, columns, window_length=window_length, polyorder=polyorder)
+        data[(data['Day'] >= i) & (data['Day'] <= i + window_size - 1)] = temp
 
     cols_zero_clipping = ['Wspd']
     for col in (col for col in cols_zero_clipping if col in columns):
@@ -284,6 +297,7 @@ def outlier_handler(data, columns, window_length = 21, polyorder = 3, verbose=Fa
         min_val = vals[vals > 0][0]
         data[col] = data[col].clip(min_val, max(data[col]))
     return data
+
 
 def drop_outliers(data, columns, verbose=False):
     temp = data.copy()
@@ -311,12 +325,14 @@ def drop_outliers(data, columns, verbose=False):
         temp.drop([f'{column}_diff'], axis=1, inplace=True)
     return temp
 
+
 def fill_gaps(data, columns):
     temp = data.copy()
     for column in columns:
         temp[column] = temp[column].interpolate()
         temp[column] = temp[column].fillna(method='bfill')
     return temp
+
 
 def curve_fit(data, columns, window_length=21, polyorder=3):
     from scipy.signal import savgol_filter
@@ -326,15 +342,16 @@ def curve_fit(data, columns, window_length=21, polyorder=3):
         temp[column] = savgol_filter(temp[column], window_length, polyorder)
     return temp
 
+
 def get_power_constant(data):
     data = copy(data)
     if 'Wspd_cube' not in data:
         data['WspdX'] = data['Wspd'] * np.cos(np.radians(data['Wdir']))
-        data['Wspd_cube'] = data['WspdX']**3
+        data['Wspd_cube'] = data['WspdX'] ** 3
     if 'Etmp_abs' not in data:
         data['Etmp_abs'] = data['Etmp'] + 243.15
     C = {turbID: None for turbID in data['TurbID'].unique()}
     for turbID in data['TurbID'].unique():
         d = data[data['TurbID'] == turbID]
-        C[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).mean()
+        C[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs']) / 807).clip(0, 0.5).mean()
     return C
