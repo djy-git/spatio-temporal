@@ -69,7 +69,7 @@ def impute_data(data, threshold=6 * 12):
         Imputed data
     """
     data_imp = pd.DataFrame()
-    for turbID in data['TurbID'].unique():
+    for turbID in tqdm(data['TurbID'].unique()):
         data_tid = data[data['TurbID'] == turbID]
         idxs = (data_tid.isna().sum(axis='columns') > 0)
         idxs_nan = idxs[idxs].index
@@ -281,7 +281,7 @@ def scale(data, scaler):
 def outlier_handler(data, columns, window_length=21, polyorder=3, verbose=False, smooth=False):
     data = data.copy()
     window_size = 2
-    for i in data['Day'].unique():
+    for i in tqdm(data['Day'].unique()):
         temp = data[(data['Day'] >= i) & (data['Day'] <= i + window_size - 1)].copy()
         if verbose:
             print('Day ', i)

@@ -75,6 +75,11 @@ Power (W) = 1/2 x 299/(t + 273.15) x 5398m² x v^3 x C
 
 Power(kW) = 807/(t + 273.15)x v**3 x C
 
+rated wind speed 10.5m/s at 26degrees
+Power(kW) = 807/300x v**3 x C
+      1550= 3,114.01125 * C
+C = 0.5
+
 ### [터빈 종류 및 스펙](https://en.wind-turbine-models.com/turbines)
 ![](assets/patvMax.png)
 **Patv**의 최대값이 대략 1500KW,즉 **1.5MW**라고 볼 수 있다. \
