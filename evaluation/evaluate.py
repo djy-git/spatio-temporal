@@ -1,5 +1,5 @@
 from common.util import *
-import metrics
+from evaluation import metrics
 
 
 def evaluate_each(submission_filename):
@@ -94,7 +94,8 @@ def evaluate(prediction_df):
 
 
 if __name__ == '__main__':
-    filename = 'prediction_2022-07-12 15_28_22_score16.csv'
+
+    filename = 'prediction_2022-07-16 14_21_46_score0.csv'
 
     prediction_df = pd.read_csv(join(PATH.output, filename))
     print('\n File Name : \n\t{}\n'.format(filename))
