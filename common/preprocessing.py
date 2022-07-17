@@ -1,5 +1,5 @@
 from common.util import *
-from scipy.signal import savgol_filter
+
 
 def generate_full_timestamp(data, drop=False):
     """Generate not duplicated time series index
@@ -90,7 +90,7 @@ def impute_data(data, threshold=6*12):
     check_nan(data_imp, "Imputing")
     return data_imp
 
-def feature_engineering(data):
+def feature_engineering(data, use_turbID=False):
     """Add features with feature engineering
 
     Parameters
@@ -104,6 +104,12 @@ def feature_engineering(data):
         Preprocessed data
     """
     temp = data.copy()
+
+    ## Binary encoding of TurbID
+    if use_turbID:
+        from category_encoders import BinaryEncoder
+        bin_enc = BinaryEncoder()
+        temp = temp.join(bin_enc)
 
     location_data = pd.read_csv(join(PATH.input, "turb_location.csv")).set_index('TurbID')
     location_dict = location_data.to_dict('index')
@@ -313,6 +319,8 @@ def fill_gaps(data, columns):
     return temp
 
 def curve_fit(data, columns, window_length=21, polyorder=3):
+    from scipy.signal import savgol_filter
+
     temp = data.copy()
     for column in columns:
         temp[column] = savgol_filter(temp[column], window_length, polyorder)
@@ -321,7 +329,8 @@ def curve_fit(data, columns, window_length=21, polyorder=3):
 def get_power_constant(data):
     data = copy(data)
     if 'Wspd_cube' not in data:
-        data['Wspd_cube'] = data['Wspd']**3
+        data['WspdX'] = data['Wspd'] * np.cos(np.radians(data['Wdir']))
+        data['Wspd_cube'] = data['WspdX']**3
     if 'Etmp_abs' not in data:
         data['Etmp_abs'] = data['Etmp'] + 243.15
     C = {turbID: None for turbID in data['TurbID'].unique()}
