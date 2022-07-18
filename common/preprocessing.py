@@ -94,7 +94,7 @@ def impute_data(data, threshold=6 * 12):
     return data_imp
 
 
-def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple', compute_Pmax_clipping=True):
+def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple', compute_Pmax_clipping=True, power_constant = 0.5):
     """Add features with feature engineering
 
     Parameters
@@ -186,7 +186,7 @@ def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple',
 
     # Maximum power from wind
     temp['Wspd_cube'] = temp['WspdX'] ** 3
-    temp['Pmax'] = compute_Pmax(temp, method=compute_Pmax_method, clipping=compute_Pmax_clipping)
+    temp['Pmax'] = compute_Pmax(temp, method=compute_Pmax_method, clipping=compute_Pmax_clipping, power_constant = 0.5)
 
     # Apparent power, Power arctangent
     temp['Papt'] = np.sqrt(temp['Prtv'] ** 2 + temp['Patv'] ** 2)
