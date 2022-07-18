@@ -72,7 +72,7 @@ def split_times(times, in_seq_len, out_seq_len, stride):
             inputs.append(input);  outputs.append(output)
     return inputs, outputs
 
-def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, test_size, return_numpy=False):
+def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, test_size, return_numpy=False, drop_TurbID=True):
     """Generate train, validation, test dataset
 
     Parameters
@@ -89,8 +89,10 @@ def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, tes
         Whether to shuffle data
     test_size : int or float
         Number(int) or ratio(float) of test data
-    return_numpy : bool
+    return_numpy : bool (optional)
         Whether to return numpy array
+    drop_TurbID : bool (optional)
+        Whether to drop TurbID
 
     Returns
     -------
@@ -113,7 +115,9 @@ def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, tes
     data = generate_full_timestamp(data, drop=True)
 
     for i in tqdm(sorted(pd.unique(data['TurbID']))):
-        data_tid = data[data['TurbID'] == i].drop(columns=['TurbID'])
+        data_tid = data[data['TurbID'] == i]
+        if drop_TurbID:
+            data_tid.drop(columns=['TurbID'], inplace=True)
         times    = data_tid['Time'].sort_values()
         data_tid = data_tid.set_index('Time')
 
