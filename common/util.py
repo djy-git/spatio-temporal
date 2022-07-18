@@ -68,9 +68,15 @@ def set_random_seed(seed):
     """
     import tensorflow as tf
     import torch
-    os.environ["PYTHONHASHSEED"] = str(seed)
-    tf.keras.utils.set_random_seed(seed)
+    # Common
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    tf.keras.utils.set_random_seed(seed)  # random, numpy, tensorflow
 
+    # TensorFlow
+    # tf.keras.utils.set_random_seed(seed)
+    tf.config.experimental.enable_op_determinism()
+
+    # Torch
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)  # type: ignore
     torch.backends.cudnn.deterministic = True  # type: ignore
