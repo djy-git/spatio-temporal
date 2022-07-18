@@ -94,7 +94,7 @@ def impute_data(data, threshold=6 * 12):
     return data_imp
 
 
-def feature_engineering(data, encode_TurbID=False):
+def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple', compute_Pmax_clipping=True):
     """Add features with feature engineering
 
     Parameters
@@ -103,6 +103,10 @@ def feature_engineering(data, encode_TurbID=False):
         Input data
     encode_TurbID: bool (optional)
         Whether to encode TurbID with Binary encoding
+    compute_Pmax_method : str (optional)
+        Method to compute Maximum Power(Pmax)
+    compute_Pmax_clipping : bool (optional)
+        Whether to clip Pmax with Patv range
 
     Returns
     -------
@@ -182,11 +186,7 @@ def feature_engineering(data, encode_TurbID=False):
 
     # Maximum power from wind
     temp['Wspd_cube'] = temp['WspdX'] ** 3
-    for turbID, C in get_power_constant(temp).items():
-        temp.loc[temp['TurbID'] == turbID, 'C'] = C
-    temp['Pmax'] = temp['C'] * (temp['Wspd_cube'] / temp['Etmp_abs'])
-    temp['Pmax'] = temp['Pmax'].clip(min(temp['Patv']), max(temp['Patv']))
-    # temp.drop(columns=['C'], inplace=True)
+    temp['Pmax'] = compute_Pmax(temp, method=compute_Pmax_method, clipping=compute_Pmax_clipping)
 
     # Apparent power, Power arctangent
     temp['Papt'] = np.sqrt(temp['Prtv'] ** 2 + temp['Patv'] ** 2)
@@ -349,16 +349,47 @@ def curve_fit(data, columns, window_length=21, polyorder=3):
         temp[column] = savgol_filter(temp[column], window_length, polyorder)
     return temp
 
+def compute_Pmax(data, method='simple', clipping=True):
+    """Compute power constant for computing Maximum Power(Pmax)
 
-def get_power_constant(data):
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Input data
+    method : str (optional)
+        Method to compute power constant
+    clipping : bool (optional)
+        Whether to clip Pmax with Patv range
+
+    Returns
+    -------
+    Pmax : pandas.Series
+        Maximum power
+    """
     data = copy(data)
+
+    # Prepare necessary features
     if 'Wspd_cube' not in data:
         data['WspdX'] = data['Wspd'] * np.cos(np.radians(data['Wdir']))
         data['Wspd_cube'] = data['WspdX'] ** 3
     if 'Etmp_abs' not in data:
         data['Etmp_abs'] = data['Etmp'] + 243.15
-    C = {turbID: None for turbID in data['TurbID'].unique()}
+
+    # Compute constants
+    constants = {turbID: None for turbID in data['TurbID'].unique()}
     for turbID in data['TurbID'].unique():
         d = data[data['TurbID'] == turbID]
-        C[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).clip(0, 403.5).mean()
-    return C
+        if method == 'simple':
+            constants[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).mean()
+        elif method == 'clipping':
+            constants[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).clip(0, 403.5).mean()
+        else:
+            raise ValueError(f"{method} should be in ['simple', 'clipping']")
+
+    # Compute Pmax
+    for turbID, C in constants.items():
+        data.loc[data['TurbID'] == turbID, 'C'] = C
+    data['Pmax'] = data['C'] * (data['Wspd_cube'] / data['Etmp_abs'])
+    if clipping:
+        data['Pmax'] = data['Pmax'].clip(min(data['Patv']), max(data['Patv']))
+    return data['Pmax']
