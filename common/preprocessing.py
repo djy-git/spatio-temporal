@@ -212,7 +212,7 @@ def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple',
     return temp
 
 
-def select_features(data, threshold=0.4, include_TurbID=False):
+def select_features(data, threshold=0.4):
     """Select features which has correlations with Patv more than threshold
 
     Parameters
@@ -221,8 +221,6 @@ def select_features(data, threshold=0.4, include_TurbID=False):
         Input data
     threshold : float (optional)
         Correlation threshold
-    include_TurbID : bool (optional)
-        Whether to include encoded TurbID
 
     Returns
     -------
@@ -232,8 +230,7 @@ def select_features(data, threshold=0.4, include_TurbID=False):
     corr = data.corr()['Patv'].sort_values()
     corr_abs = corr.abs().sort_values()
     cols = list(corr_abs[corr_abs > threshold].index)
-    if include_TurbID:
-        cols = [col for col in data if col.startswith('TurbID_')] + [col for col in cols if 'TurbID' not in col]
+    cols = [col for col in data if 'TurbID_' in col] + [col for col in cols if 'TurbID_' not in col]
     print("* Selected features:", cols)
     return cols
 
