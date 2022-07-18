@@ -445,3 +445,50 @@ Accuracy:  32.2599%
 
 ## Model
 - GRU-Model
+
+
+# [proposed23.ipynb](proposed/proposed23.ipynb)
+## Data
+- `outlier_handler(['Etmp', 'Itmp', 'Wdir', 'Ndir'])` \
+  사용하지 않는 것이 좋음 (MAE: 250 vs **404**) 
+- `feature_selection()`보다 적당한 feature를 직접 선택하는 것이 좋음 \
+  (MAE: 250 vs **310**)
+
+```
+data_imp = impute_data(data)
+data_fe = feature_engineering(data_out, encode_TurbID=False, compute_Pmax_method='simple', compute_Pmax_clipping=False)
+cols = ['Wspd', 'Wspd_cube', 'Wdir', 'Etmp', 'Itmp', 'Ndir', 'Pab', 'RPM', 'TSR', 'Pmax', 'Prtv', 'Patv']
+Mark anomaly
+MinMax Scaling
+Set Patv to zero
+```
+
+## Model
+- GRU-Model
+  - Clipping output layer 추가
+    ```
+    class OutputLayer(layers.Layer):
+    def __init__(self, min_val, max_val, **kwags):
+        super().__init__(**kwags)
+        self.min_val = min_val
+        self.max_val = max_val
+    def call(self, data):
+        _, B, F = data.shape
+        *other, Patv = tf.split(data, data.shape[2], axis=2)
+        Patv = tf.clip_by_value(Patv, self.min_val, self.max_val)
+        return tf.concat([*other, Patv], axis=2)
+    def get_config(self):
+        return super().get_config()
+    ```
+
+```
+ File Name : 
+	proposed23.csv
+
+Accuracy:  66.3820%
+
+ 	 RMSE: 316.5444798351699, MAE: 250.29155574702474
+
+ --- Overall Score --- 
+	283.4180177910973
+```
