@@ -6,6 +6,7 @@ class PATH:
     input  = join(root, 'data')
     output = join(root, 'output')
     target = join(root, 'data', 'target.csv')
+    ckpt   = join(root, 'ckpt')
 
 
 @dataclass
@@ -60,7 +61,7 @@ def check_nan(data, name):
     print("  - Number of nan rows:", sum(data.isna().sum(axis='columns') > 0))
 
 def set_random_seed(seed):
-    """Set random seed for reusability
+    """Set random seed for reproducibility
 
     seed : int
         Random seed
