@@ -94,7 +94,7 @@ def impute_data(data, threshold=6 * 12):
     return data_imp
 
 
-def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple', compute_Pmax_clipping=True):
+def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple', compute_Pmax_clipping=True, power_constant=0.5):
     """Add features with feature engineering
 
     Parameters
@@ -107,6 +107,7 @@ def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple',
         Method to compute Maximum Power(Pmax)
     compute_Pmax_clipping : bool (optional)
         Whether to clip Pmax with Patv range
+    power_constant : float (optional)
 
     Returns
     -------
@@ -189,7 +190,7 @@ def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple',
 
     # Maximum power from wind
     temp['Wspd_cube'] = temp['WspdX'] ** 3
-    temp['Pmax'] = compute_Pmax(temp, method=compute_Pmax_method, clipping=compute_Pmax_clipping)
+    temp['Pmax'] = compute_Pmax(temp, method=compute_Pmax_method, clipping=compute_Pmax_clipping, power_constant=power_constant)
 
     # Apparent power, Power arctangent
     temp['Papt']  = np.sqrt(temp['Prtv'] ** 2 + temp['Patv'] ** 2)
@@ -233,7 +234,8 @@ def select_features(data, threshold=0.4):
     corr = data.corr()['Patv'].sort_values()
     corr_abs = corr.abs().sort_values()
     cols = list(corr_abs[corr_abs > threshold].index)
-    cols = ['TurbID'] + [col for col in data if 'TurbID_' in col] + [col for col in cols if 'TurbID' not in col]
+    if include_TurbID:
+        cols = [col for col in data if col.startswith('TurbID_')] + [col for col in cols if 'TurbID' not in col]
     print("* Selected features:", cols)
     return cols
 
@@ -344,7 +346,7 @@ def curve_fit(data, columns, window_length=21, polyorder=3):
     return temp
 
 
-def compute_Pmax_constants(data, method='simple'):
+def compute_Pmax_constants(data, method='simple', power_constant=0.5):
     """Compute constants for computing maximum Power(Pmax)
 
     Parameters
@@ -353,6 +355,7 @@ def compute_Pmax_constants(data, method='simple'):
         Input data
     method : str (optional)
         Method to compute power constant
+    power_constant : float (optional)
 
     Returns
     -------
@@ -373,12 +376,13 @@ def compute_Pmax_constants(data, method='simple'):
         if method == 'simple':
             constants[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).mean()
         elif method == 'clipping':
-            constants[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).clip(0, 403.5).mean()
+            constants[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).clip(0, 807*power_constant).mean()
         else:
             raise ValueError(f"{method} should be in ['simple', 'clipping']")
     return constants
 
-def compute_Pmax(data, method='simple', clipping=True, clipping_min_val=None, clipping_max_val=None, constants=None):
+
+def compute_Pmax(data, method='simple', clipping=True, clipping_min_val=None, clipping_max_val=None, constants=None, power_constant=0.5):
     """Compute Maximum Power(Pmax)
 
     Parameters
@@ -395,6 +399,7 @@ def compute_Pmax(data, method='simple', clipping=True, clipping_min_val=None, cl
         Max value for clipping
     constants : dict (optional)
         Computed Pmax constants
+    power_constant : float (optional)
 
     Returns
     -------
@@ -412,7 +417,7 @@ def compute_Pmax(data, method='simple', clipping=True, clipping_min_val=None, cl
 
     # Compute constants
     if constants is None:
-        constants = compute_Pmax_constants(data, method)
+        constants = compute_Pmax_constants(data, method, power_constant)
 
     # Compute Pmax
     for turbID, C in constants.items():
