@@ -159,6 +159,11 @@ def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple',
     temp['NdirX'] = np.cos(ndir)
     temp['NdirY'] = np.sin(ndir)
 
+    # Wind speed should be positive for computing Pmax
+    vals         = temp['Wspd'].value_counts().index
+    min_val      = vals[vals > 0][0]
+    temp['Wspd'] = temp['Wspd'].clip(min_val, max(temp['Wspd']))
+
     # Wind speed cosine, sine
     wdir = np.radians(temp['Wdir'])
     temp['WspdX'] = temp['Wspd'] * np.cos(wdir)
@@ -177,8 +182,6 @@ def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple',
     temp['Bspd3'] = temp['TSR3'] * temp['WspdX']
 
     # RPM derived from blade speed
-    temp['RPM'] = ((temp['Bspd1'] + temp['Bspd2'] + temp['Bspd3']) / 3)
-
     temp['Pab'] = ((temp['Pab1'] + temp['Pab2'] + temp['Pab3']) / 3)
     temp['RPM'] = ((temp['Bspd1'] + temp['Bspd2'] + temp['Bspd3']) / 3)
     temp['TSR'] = ((temp['TSR1'] + temp['TSR2'] + temp['TSR3']) / 3)
@@ -189,7 +192,7 @@ def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple',
     temp['Pmax'] = compute_Pmax(temp, method=compute_Pmax_method, clipping=compute_Pmax_clipping)
 
     # Apparent power, Power arctangent
-    temp['Papt'] = np.sqrt(temp['Prtv'] ** 2 + temp['Patv'] ** 2)
+    temp['Papt']  = np.sqrt(temp['Prtv'] ** 2 + temp['Patv'] ** 2)
     temp['Patan'] = np.arctan(temp['Prtv'] / temp['Patv']).fillna(-np.pi / 2)
 
     ## add 3day & 5day mean value for target according to Hour
@@ -230,7 +233,7 @@ def select_features(data, threshold=0.4):
     corr = data.corr()['Patv'].sort_values()
     corr_abs = corr.abs().sort_values()
     cols = list(corr_abs[corr_abs > threshold].index)
-    cols = [col for col in data if 'TurbID_' in col] + [col for col in cols if 'TurbID_' not in col]
+    cols = ['TurbID'] + [col for col in data if 'TurbID_' in col] + [col for col in cols if 'TurbID' not in col]
     print("* Selected features:", cols)
     return cols
 
@@ -294,12 +297,6 @@ def outlier_handler(data, columns, window_length=21, polyorder=3, verbose=False,
         if smooth:
             temp = curve_fit(temp, columns, window_length=window_length, polyorder=polyorder)
         data[(data['Day'] >= i) & (data['Day'] <= i + window_size - 1)] = temp
-
-    cols_zero_clipping = ['Wspd']
-    for col in (col for col in cols_zero_clipping if col in columns):
-        vals = data[col].value_counts().index
-        min_val = vals[vals > 0][0]
-        data[col] = data[col].clip(min_val, max(data[col]))
     return data
 
 
@@ -346,7 +343,42 @@ def curve_fit(data, columns, window_length=21, polyorder=3):
         temp[column] = savgol_filter(temp[column], window_length, polyorder)
     return temp
 
-def compute_Pmax(data, method='simple', clipping=True):
+
+def compute_Pmax_constants(data, method='simple'):
+    """Compute constants for computing maximum Power(Pmax)
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Input data
+    method : str (optional)
+        Method to compute power constant
+
+    Returns
+    -------
+    constants : dict
+    """
+    data = copy(data)
+
+    # Prepare necessary features
+    if 'Wspd_cube' not in data:
+        data['WspdX'] = data['Wspd'] * np.cos(np.radians(data['Wdir']))
+        data['Wspd_cube'] = data['WspdX'] ** 3
+    if 'Etmp_abs' not in data:
+        data['Etmp_abs'] = data['Etmp'] + 243.15
+
+    constants = {turbID: None for turbID in data['TurbID'].unique()}
+    for turbID in data['TurbID'].unique():
+        d = data[data['TurbID'] == turbID]
+        if method == 'simple':
+            constants[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).mean()
+        elif method == 'clipping':
+            constants[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).clip(0, 403.5).mean()
+        else:
+            raise ValueError(f"{method} should be in ['simple', 'clipping']")
+    return constants
+
+def compute_Pmax(data, method='simple', clipping=True, clipping_min_val=None, clipping_max_val=None, constants=None):
     """Compute Maximum Power(Pmax)
 
     Parameters
@@ -357,6 +389,12 @@ def compute_Pmax(data, method='simple', clipping=True):
         Method to compute power constant
     clipping : bool (optional)
         Whether to clip Pmax with Patv range
+    clipping_min_val : float (optional)
+        Min value for clipping
+    clipping_max_val : float (optional)
+        Max value for clipping
+    constants : dict (optional)
+        Computed Pmax constants
 
     Returns
     -------
@@ -373,20 +411,40 @@ def compute_Pmax(data, method='simple', clipping=True):
         data['Etmp_abs'] = data['Etmp'] + 243.15
 
     # Compute constants
-    constants = {turbID: None for turbID in data['TurbID'].unique()}
-    for turbID in data['TurbID'].unique():
-        d = data[data['TurbID'] == turbID]
-        if method == 'simple':
-            constants[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).mean()
-        elif method == 'clipping':
-            constants[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).clip(0, 403.5).mean()
-        else:
-            raise ValueError(f"{method} should be in ['simple', 'clipping']")
+    if constants is None:
+        constants = compute_Pmax_constants(data, method)
 
     # Compute Pmax
     for turbID, C in constants.items():
         data.loc[data['TurbID'] == turbID, 'C'] = C
     data['Pmax'] = data['C'] * (data['Wspd_cube'] / data['Etmp_abs'])
     if clipping:
-        data['Pmax'] = data['Pmax'].clip(min(data['Patv']), max(data['Patv']))
+        if clipping_min_val is None:
+            clipping_min_val = min(data['Patv'])
+        if clipping_max_val is None:
+            clipping_max_val = max(data['Patv'])
+        data['Pmax'] = data['Pmax'].clip(clipping_min_val, clipping_max_val)
     return data['Pmax']
+
+# def select_residual_threshold(true, pred, plot=False, n_rows=10, clip_Pmax=True):
+#     from matplotlib.cbook import boxplot_stats
+#
+#     if clip_Pmax:
+#         pred = np.clip(pred, min(true), max(true))
+#     res = true - pred
+#     threshold = boxplot_stats(res)[0]['whislo']
+#
+#     if plot:
+#         n_data     = len(true)
+#         batch_size = (n_data // n_rows) if n_data % n_rows == 0 else (n_data // n_rows + 1)
+#         fig, axes = plt.subplots(n_rows, 1, figsize=(40, n_rows*2))
+#         for i, ax in enumerate(axes.flatten()):
+#             res_batch  = res[i*batch_size:(i+1)*batch_size]
+#             ax.plot(res_batch)
+#             ax.axhline(0, color='k')
+#             ax.axhline(threshold, color='b')
+#             ax.set_xticklabels([])
+#         fig.tight_layout()
+#         plt.show()
+#
+#     return threshold
