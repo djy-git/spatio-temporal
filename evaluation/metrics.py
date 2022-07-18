@@ -270,37 +270,15 @@ class CondLoss(tf.keras.losses.Loss):
         y_true = tf.reshape(y_true, (-1, D))
         y_pred = tf.reshape(y_pred, (-1, D))
 
-        idxs_valid = (y_true[:, -1] != self.marked_target_value)
-        y_true_valid, y_pred_valid = y_true[idxs_valid], y_pred[idxs_valid]
-        error = y_true_valid - y_pred_valid
+        idxs_valid_mark = (y_true[:, -1] != self.marked_target_value)  # [-1]: Patv
+        y_true_valid, y_pred_valid = y_true[idxs_valid_mark], y_pred[idxs_valid_mark]
+        res = y_true_valid - y_pred_valid
+
         if self.loss_fn == 'rmse':
-            return tf.sqrt(tf.reduce_mean(tf.square(error)))
+            return tf.sqrt(tf.reduce_mean(tf.square(res)))
         elif self.loss_fn == 'mse':
-            return tf.reduce_mean(tf.square(error))
+            return tf.reduce_mean(tf.square(res))
         elif self.loss_fn == 'mae':
-            return tf.reduce_mean(tf.abs(error))
+            return tf.reduce_mean(tf.abs(res))
         else:
             raise NotImplementedError
-
-
-# def create_custom_metric(loss_fn, marked_target_value):
-#     def loss(y_true, y_pred):
-#         # y_true, y_pred: [B, S, D]
-#         assert y_true.shape == y_pred.shape, f'Shape mismatch for output and ground truth array {y_true.shape} and {y_pred.shape}'
-#
-#         _, S, D = y_true.shape  # Batch, Sequence, Dim of features
-#         y_true = tf.reshape(y_true, (-1, D))
-#         y_pred = tf.reshape(y_pred, (-1, D))
-#
-#         idxs_valid = (y_pred[:, -1] != marked_target_value)
-#         y_true_valid, y_pred_valid = y_true[idxs_valid], y_pred[idxs_valid]
-#         error = y_true_valid - y_pred_valid
-#         if loss_fn == 'rmse':
-#             return tf.sqrt(tf.reduce_mean(tf.square(error)))
-#         elif loss_fn == 'mse':
-#             return tf.reduce_mean(tf.square(error))
-#         elif loss_fn == 'mae':
-#             return tf.reduce_mean(tf.abs(error))
-#         else:
-#             raise NotImplementedError
-#     return loss
