@@ -18,7 +18,7 @@ def generate_full_timestamp(data, drop=False):
     """
     data = data.copy()
 
-    # Tmstamp: Timestamp in a day
+    # Time_in_day: Timestamp in a day
     tms_list = list(pd.unique(data['Tmstamp']))
     data['Time_in_day'] = data['Tmstamp'].apply(lambda x: tms_list.index(x) + 1)
 
@@ -94,13 +94,15 @@ def impute_data(data, threshold=6 * 12):
     return data_imp
 
 
-def feature_engineering(data, use_turbID=False):
+def feature_engineering(data, encode_TurbID=False):
     """Add features with feature engineering
 
     Parameters
     ----------
     data : pandas.DataFrame
         Input data
+    encode_TurbID: bool (optional)
+        Whether to encode TurbID with Binary encoding
 
     Returns
     -------
@@ -110,10 +112,9 @@ def feature_engineering(data, use_turbID=False):
     temp = data.copy()
 
     ## Binary encoding of TurbID
-    if use_turbID:
+    if encode_TurbID:
         from category_encoders import BinaryEncoder
-        bin_enc = BinaryEncoder()
-        temp = temp.join(bin_enc)
+        temp = BinaryEncoder().fit_transform(temp['TurbID'].astype(str)).join(temp)
 
     location_data = pd.read_csv(join(PATH.input, "turb_location.csv")).set_index('TurbID')
     x_grid = np.linspace(0, 5000, 6)
@@ -211,7 +212,7 @@ def feature_engineering(data, use_turbID=False):
     return temp
 
 
-def select_features(data, threshold=0.4):
+def select_features(data, threshold=0.4, include_TurbID=False):
     """Select features which has correlations with Patv more than threshold
 
     Parameters
@@ -220,6 +221,8 @@ def select_features(data, threshold=0.4):
         Input data
     threshold : float (optional)
         Correlation threshold
+    include_TurbID : bool (optional)
+        Whether to include encoded TurbID
 
     Returns
     -------
@@ -228,7 +231,11 @@ def select_features(data, threshold=0.4):
     """
     corr = data.corr()['Patv'].sort_values()
     corr_abs = corr.abs().sort_values()
-    return corr_abs[corr_abs > threshold].index
+    cols = list(corr_abs[corr_abs > threshold].index)
+    if include_TurbID:
+        cols = [col for col in data if col.startswith('TurbID_')] + [col for col in cols if 'TurbID' not in col]
+    print("* Selected features:", cols)
+    return cols
 
 
 def smooth(data, target, window_length=11, polyorder=3):
