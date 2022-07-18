@@ -350,7 +350,7 @@ def curve_fit(data, columns, window_length=21, polyorder=3):
     return temp
 
 def compute_Pmax(data, method='simple', clipping=True):
-    """Compute power constant for computing Maximum Power(Pmax)
+    """Compute Maximum Power(Pmax)
 
     Parameters
     ----------
