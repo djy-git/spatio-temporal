@@ -353,5 +353,5 @@ def get_power_constant(data):
     C = {turbID: None for turbID in data['TurbID'].unique()}
     for turbID in data['TurbID'].unique():
         d = data[data['TurbID'] == turbID]
-        C[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs']) / 807).clip(0, 0.5).mean()
+        C[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).clip(0, 403.5).mean()
     return C
