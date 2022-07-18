@@ -346,7 +346,7 @@ def curve_fit(data, columns, window_length=21, polyorder=3):
         temp[column] = savgol_filter(temp[column], window_length, polyorder)
     return temp
 
-def compute_Pmax(data, method='simple', clipping=True):
+def compute_Pmax(data, method='simple', clipping=True, power_constant = 0.5):
     """Compute Maximum Power(Pmax)
 
     Parameters
@@ -379,7 +379,7 @@ def compute_Pmax(data, method='simple', clipping=True):
         if method == 'simple':
             constants[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).mean()
         elif method == 'clipping':
-            constants[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).clip(0, 403.5).mean()
+            constants[turbID] = (d['Patv'] / (d['Wspd_cube'] / d['Etmp_abs'])).clip(0, 807*power_constant).mean()
         else:
             raise ValueError(f"{method} should be in ['simple', 'clipping']")
 
