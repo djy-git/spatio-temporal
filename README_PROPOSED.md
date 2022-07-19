@@ -492,3 +492,56 @@ Accuracy:  66.3820%
  --- Overall Score --- 
 	283.4180177910973
 ```
+
+
+# [proposed24.ipynb](proposed/proposed24.ipynb)
+**proposed23** 에서 다음을 변경
+
+## Data
+- Marking 제거 / 포함 실험 \
+Marking을 하는 것이 더 좋다 (**323** < 447)
+
+```
+# Mark anomaly(apply)
+train_y_mark_fin = copy(train_y_fin)
+val_y_mark_fin   = copy(val_y_fin)
+# for idxs, d in zip(idxs_train_y_mark, train_y_mark_fin):
+#     d[idxs, idx_Patv] = MARKER
+# for idxs, d in zip(idxs_val_y_mark, val_y_mark_fin):
+#     d[idxs, idx_Patv] = MARKER
+```
+
+```
+ File Name : 
+	proposed24-mark=False.csv
+
+Accuracy:  45.7270%
+
+ 	 RMSE: 523.2354202891087, MAE: 447.36208268915954
+
+ --- Overall Score --- 
+	485.29875148913413
+```
+
+
+```
+# Mark anomaly(apply)
+train_y_mark_fin = copy(train_y_fin)
+val_y_mark_fin   = copy(val_y_fin)
+for idxs, d in zip(idxs_train_y_mark, train_y_mark_fin):
+    d[idxs, idx_Patv] = MARKER
+for idxs, d in zip(idxs_val_y_mark, val_y_mark_fin):
+    d[idxs, idx_Patv] = MARKER
+```
+
+```
+ File Name : 
+	proposed24.csv
+
+Accuracy:  50.5283%
+
+ 	 RMSE: 439.1459889480262, MAE: 323.6757060782518
+
+ --- Overall Score --- 
+	381.41084751313895
+```
