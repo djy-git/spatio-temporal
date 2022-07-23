@@ -1,3 +1,5 @@
+import numpy as np
+
 from common.util import *
 
 
@@ -18,10 +20,6 @@ def generate_full_timestamp(data, drop=False):
     """
     data = data.copy()
 
-    # Time_in_day: Timestamp in a day
-    tms_list = list(pd.unique(data['Tmstamp']))
-    data['Time_in_day'] = data['Tmstamp'].apply(lambda x: tms_list.index(x) + 1)
-
     for i in data['TurbID'].unique():
         data_tid = data[data['TurbID'] == i]
         if pd.Series(zip(data_tid['Day'], data_tid['Tmstamp'])).is_monotonic_increasing:  # check if sorted
@@ -30,7 +28,7 @@ def generate_full_timestamp(data, drop=False):
     # Time: Not duplicated timestamp
     data['Time'] = data['Time'].astype(np.int32)
     if drop:
-        data = data.drop(columns=['Day', 'Tmstamp', 'Time_in_day'])
+        data = data.drop(columns=['Day', 'Tmstamp'])
     return data
 
 
@@ -75,19 +73,21 @@ def impute_data(data, threshold=6 * 12):
         idxs_nan = idxs[idxs].index
         idxs_removed = []
 
-        s, e = 0, 1
-        while e < len(idxs_nan):
-            cur = idxs_nan[s:e]
-            if idxs_nan[e] == cur[-1] + 1:
-                e += 1
+        if len(idxs_nan) > 0:
+            s, e = 0, 1
+            while e < len(idxs_nan):
+                cur = idxs_nan[s:e]
+                if idxs_nan[e] == cur[-1] + 1:
+                    e += 1
+                else:
+                    if len(cur) >= threshold:
+                        idxs_removed += list(cur)
+                    s = e
+                    e = s + 1
             else:
                 if len(cur) >= threshold:
                     idxs_removed += list(cur)
-                s = e
-                e = s + 1
-        else:
-            if len(cur) >= threshold:
-                idxs_removed += list(cur)
+
         data_tid_imp = data_tid.drop(idxs_removed).interpolate().fillna(method='bfill')
         data_imp = data_imp.append(data_tid_imp)
     check_nan(data_imp, "Imputing")
@@ -184,8 +184,8 @@ def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple',
 
     # RPM derived from blade speed
     temp['Pab'] = ((temp['Pab1'] + temp['Pab2'] + temp['Pab3']) / 3)
-    temp['RPM'] = ((temp['Bspd1'] + temp['Bspd2'] + temp['Bspd3']) / 3)
     temp['TSR'] = ((temp['TSR1'] + temp['TSR2'] + temp['TSR3']) / 3)
+    temp['RPM'] = ((temp['Bspd1'] + temp['Bspd2'] + temp['Bspd3']) / 3)
     # temp.drop(['TSR1','TSR2','TSR3','Bspd1','Bspd2','Bspd3'], axis=1, inplace=True)
 
     # Maximum power from wind
@@ -282,8 +282,21 @@ def positional_encoding(seq_len, d, n=10000):
 
 
 def scale(data, scaler):
-    data = np.array(data, dtype=np.float32)
-    return scaler.transform(data.reshape(-1, data.shape[-1])).reshape(data.shape)
+    if not isinstance(data, np.ndarray):
+        data = np.array(data, dtype=np.float32)
+    if len(data.shape) == 3:
+        return scaler.transform(data.reshape(-1, data.shape[-1])).reshape(data.shape)
+    elif len(data.shape) == 2:
+        return scaler.transform(data)
+    else:
+        raise ValueError("len(data.shape) should be 2 or 3")
+def inverse_scale(data, scaler):
+    if len(data.shape) == 3:
+        return scaler.inverse_transform(data.reshape(-1, data.shape[-1])).reshape(data.shape)
+    elif len(data.shape) == 2:
+        return scaler.inverse_transform(data)
+    else:
+        raise ValueError("len(data.shape) should be 2 or 3")
 
 
 # Outlier handler for multiple columns
@@ -365,7 +378,8 @@ def compute_Pmax_constants(data, method='simple', power_constant=0.5):
 
     # Prepare necessary features
     if 'Wspd_cube' not in data:
-        data['WspdX'] = data['Wspd'] * np.cos(np.radians(data['Wdir']))
+        if 'WspdX' not in data:
+            data['WspdX'] = data['Wspd'] * np.cos(np.radians(data['Wdir']))
         data['Wspd_cube'] = data['WspdX'] ** 3
     if 'Etmp_abs' not in data:
         data['Etmp_abs'] = data['Etmp'] + 243.15
@@ -408,21 +422,29 @@ def compute_Pmax(data, method='simple', clipping=True, clipping_min_val=None, cl
     """
     data = copy(data)
 
+    # Ignore anomaly
+    try:
+        data_comp = copy(data)
+        data_comp = marking_data(data, None).dropna()  # Except anomaly from computations
+    except:
+        pass  # Assume that data is already cleaned
+
     # Prepare necessary features
     if 'Wspd_cube' not in data:
-        data['WspdX'] = data['Wspd'] * np.cos(np.radians(data['Wdir']))
-        data['Wspd_cube'] = data['WspdX'] ** 3
+        if 'WspdX' not in data:
+            data_comp['WspdX'] = data_comp['Wspd'] * np.cos(np.radians(data_comp['Wdir']))
+        data_comp['Wspd_cube'] = data_comp['WspdX'] ** 3
     if 'Etmp_abs' not in data:
-        data['Etmp_abs'] = data['Etmp'] + 243.15
+        data_comp['Etmp_abs'] = data_comp['Etmp'] + 243.15
 
     # Compute constants
     if constants is None:
-        constants = compute_Pmax_constants(data, method, power_constant)
+        constants = compute_Pmax_constants(data_comp, method, power_constant)
 
     # Compute Pmax
     for turbID, C in constants.items():
-        data.loc[data['TurbID'] == turbID, 'C'] = C
-    data['Pmax'] = data['C'] * (data['Wspd_cube'] / data['Etmp_abs'])
+        data_comp.loc[data['TurbID'] == turbID, 'C'] = C
+    data['Pmax'] = data_comp['C'] * (data_comp['Wspd_cube'] / data_comp['Etmp_abs'])
     if clipping:
         if clipping_min_val is None:
             clipping_min_val = min(data['Patv'])
