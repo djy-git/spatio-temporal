@@ -138,14 +138,10 @@ def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, tes
                 val_in, val_out = inputs[-n_val:], outputs[-n_val:]
                 train_output_threshold = val_out[0].start  # not included
 
-                # Find i s.t. (1 + in_seq_len + i*stride) + out_seq_len = train_output_threshold - 1
-                i = ((train_output_threshold - 1) - (1 + in_seq_len) - out_seq_len) // stride
-                train_in, train_out = inputs[:i], outputs[:i]
-
-                # for i in range(len(inputs)):
-                #     if outputs[i].stop > train_output_threshold:
-                #         train_in, train_out = inputs[:i], outputs[:i]
-                        # break
+                for i in range(len(inputs)):
+                    if outputs[i].stop > train_output_threshold:
+                        train_in, train_out = inputs[:i], outputs[:i]
+                        break
         else:
             train_in, val_in, train_out, val_out = inputs, [], outputs, []
 
