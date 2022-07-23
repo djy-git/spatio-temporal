@@ -545,3 +545,121 @@ Accuracy:  50.5283%
  --- Overall Score --- 
 	381.41084751313895
 ```
+
+
+# [proposed27.ipynb](proposed/proposed27.ipynb)
+## Data
+- Input feautures
+  ```
+  cols = ['TurbID', 'Patv',
+          'TSR', 'RPM', 'Wspd', 'Etmp', 'Itmp', 'PabX', 'PabY', 'WspdX', 'WspdY', 'HourX', 'HourY']
+  ```
+
+## Model
+```
+from tensorflow import keras
+from tensorflow.keras import layers
+
+
+class OutputLayer(layers.Layer):
+    def __init__(self, min_val, max_val, **kwags):
+        super().__init__(**kwags)
+        self.min_val = min_val
+        self.max_val = max_val
+    def call(self, data):
+        _, B, F = data.shape
+        TurbID, Patv, *other = tf.split(data, data.shape[2], axis=2)
+        Patv = tf.clip_by_value(Patv, self.min_val, self.max_val)
+        return tf.concat([TurbID, Patv, *other], axis=2)
+    def get_config(self):
+        return super().get_config()
+    
+    
+def build_model(input_shape, output_shape, units, n_blocks, dropout=None):
+    S,  F  = input_shape
+    S_, F_ = output_shape
+    
+    model = keras.Sequential(name="GRU-Model") # Model
+    model.add(keras.Input(shape=(S, F), name='Input-Layer'))
+
+    for _ in range(n_blocks+1):
+        model.add(layers.Bidirectional(layers.GRU(units, return_sequences=True, dropout=dropout)))
+    
+    model.add(layers.Dense(units=F_))
+    model.add(OutputLayer(Patv_min_scaled, Patv_max_scaled))
+    return model
+```
+
+## Training
+```
+from tensorflow.keras import losses, metrics
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
+from livelossplot import PlotLossesKeras
+
+class PartialLoss(losses.Loss):
+    def __init__(self, loss_fn, last_idx, **kwargs):
+        super().__init__(**kwargs)
+        self.loss_fn  = loss_fn
+        self.last_idx = last_idx
+    def call(self, y_true, y_pred):
+        _, S, F = y_true.shape
+        
+        # [0]: TurbID
+        y_true = y_true[:, :, 1:self.last_idx]
+        y_pred = y_pred[:, :, 1:self.last_idx]
+        res = y_true - y_pred
+
+        if self.loss_fn == 'rmse':
+            return tf.sqrt(tf.reduce_mean(tf.square(res)))
+        elif self.loss_fn == 'mse':
+            return tf.reduce_mean(tf.square(res))
+        elif self.loss_fn == 'mae':
+            return tf.reduce_mean(tf.abs(res))
+        else:
+            raise NotImplementedError
+
+            
+def compile_and_fit(model, train_ds, val_ds, epochs, patience_es=10, patience_lr=3):
+    model.compile('nadam', loss=PartialLoss(loss_fn='rmse', last_idx=len(cols)), metrics=[metrics.RootMeanSquaredError(), 'mae'])
+    
+    ckpt_dir = join(PATH.ckpt, exp_name)
+    os.makedirs(ckpt_dir, exist_ok=True)
+    
+    return model.fit(train_ds, validation_data=val_ds,
+                    epochs=epochs,
+                    callbacks=[
+                        PlotLossesKeras(),
+                        EarlyStopping(patience=patience_es, restore_best_weights=True),
+                        ReduceLROnPlateau(patience=patience_lr),
+                        ModelCheckpoint(join(ckpt_dir, '[{epoch:03d} epoch].h5'), save_best_only=False, save_weights_only=True),
+                    ])
+```
+
+![](assets/27-1.png)
+![](assets/27-2.png)
+![](assets/27-3.png)
+![](assets/27-4.png)
+
+```
+ File Name : 
+	proposed27.csv
+
+Accuracy:  44.0485%
+
+ 	 RMSE: 624.8080848538391, MAE: 547.4377154901243
+
+ --- Overall Score --- 
+	586.1229001719817
+```
+
+# [proposed27-include_lag.ipynb](proposed/proposed27-include_lag.ipynb)
+**proposed27**에서 lag=3 features를 추가
+결과는 비슷
+
+# [proposed28.ipynb](proposed/proposed28.ipynb)
+**proposed27**에서 `TurbID` binary encoding을 추가
+결과는 비슷
+
+# [proposed28-include_lag.ipynb](proposed/proposed28-include_lag.ipynb)
+**proposed28**에서 lag=3 features를 추가
+결과는 비슷
