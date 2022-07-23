@@ -109,10 +109,17 @@ def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, tes
     """
     from sklearn.model_selection import train_test_split
 
+    data = copy(data)
+
     train_x, train_y = [], []
     val_x,   val_y   = [], []
     test_x           = []
-    data = generate_full_timestamp(data, drop=True)
+    if 'Time' not in data:
+        data = generate_full_timestamp(data, drop=True)
+
+    if 'TurbID' not in data:
+        data['TurbID'] = 0  # dummy
+        drop_TurbID = True
 
     for i in tqdm(sorted(pd.unique(data['TurbID']))):
         data_tid = data[data['TurbID'] == i]
@@ -123,8 +130,22 @@ def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, tes
 
         # Select time index
         inputs, outputs = split_times(times, in_seq_len, out_seq_len, stride)
-        if test_size > 0:
-            train_in, val_in, train_out, val_out = train_test_split(inputs, outputs, shuffle=shuffle, test_size=test_size)
+        if len(inputs) > 0 and (test_size > 0):
+            if shuffle:
+                train_in, val_in, train_out, val_out = train_test_split(inputs, outputs, shuffle=True, test_size=test_size)
+            else:
+                n_val = int(len(inputs) * test_size)
+                val_in, val_out = inputs[-n_val:], outputs[-n_val:]
+                train_output_threshold = val_out[0].start  # not included
+
+                # Find i s.t. (1 + in_seq_len + i*stride) + out_seq_len = train_output_threshold - 1
+                i = ((train_output_threshold - 1) - (1 + in_seq_len) - out_seq_len) // stride
+                train_in, train_out = inputs[:i], outputs[:i]
+
+                # for i in range(len(inputs)):
+                #     if outputs[i].stop > train_output_threshold:
+                #         train_in, train_out = inputs[:i], outputs[:i]
+                        # break
         else:
             train_in, val_in, train_out, val_out = inputs, [], outputs, []
 
@@ -136,7 +157,7 @@ def make_train_val_test_data(data, in_seq_len, out_seq_len, stride, shuffle, tes
 
     if return_numpy:
         train_x, train_y = np.array(train_x, dtype=np.float32), np.array(train_y, dtype=np.float32)
-        val_x, val_y     = np.array(val_x, dtype=np.float32), np.array(val_y, dtype=np.float32)
+        val_x,   val_y   = np.array(val_x, dtype=np.float32),   np.array(val_y, dtype=np.float32)
         test_x           = np.array(test_x, dtype=np.float32)
 
     print("* Data Split")
