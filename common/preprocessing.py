@@ -143,11 +143,6 @@ def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple',
     c = 243.15
     temp['Etmp_abs'] = temp['Etmp'] + c
 
-    # Wind absolute direction adjusted Wdir + Ndir
-    temp['Wdir_adj'] = temp['Wdir'] + temp['Ndir']
-    temp['Wdir_cos'] = np.cos(temp['Wdir_adj'] / 180 * np.pi)
-    temp['Wdir_sin'] = np.sin(temp['Wdir_adj'] / 180 * np.pi)
-
     # Nacelle Direction cosine sine
     temp['Ndir_cos'] = np.cos(temp['Ndir'] / 180 * np.pi)
     temp['Ndir_sin'] = np.sin(temp['Ndir'] / 180 * np.pi)
@@ -196,21 +191,12 @@ def feature_engineering(data, encode_TurbID=False, compute_Pmax_method='simple',
     temp['Papt']  = np.sqrt(temp['Prtv'] ** 2 + temp['Patv'] ** 2)
     temp['Patan'] = np.arctan(temp['Prtv'] / temp['Patv']).fillna(-np.pi / 2)
 
-    ## add 3day & 5day mean value for target according to Hour
-    ## average TARGET values of the most recent 3, 5 days
-    #     temp['shft1'] = temp['Patv'].shift(144)
-    #     temp['shft2'] = temp['Patv'].shift(144 * 2)
-    #     temp['shft3'] = temp['Patv'].shift(144 * 3)
-    #     temp['shft4'] = temp['Patv'].shift(144 * 4)
-    #
-    #     temp['avg3'] = np.mean(temp[['Patv', 'shft1', 'shft2']].values, axis=-1)
-    #     temp['avg5'] = np.mean(temp[['Patv', 'shft1', 'shft2', 'shft3','shft4']].values, axis=-1)
-    #     temp.drop(['shft1','shft2','shft3','shft4'], axis=1, inplace=True)
-    #
-    #     temp['Patv1'] = temp['Patv'].shift(-144)
-    #     temp['Patv2'] = temp['Patv'].shift(-144 * 2)
-    #
-    #     temp = temp.dropna()
+    # shifted weather features
+    #shifted 5days
+    temp['Wspd5'] = temp['Wspd'].shift(144*5)
+    temp['Patv5'] = temp['Patv'].shift(144*5)
+    temp['Etmp5'] = temp['Etmp'].shift(144*5)
+    temp['Etmp4'] = temp['Etmp'].shift(144*4)
 
     check_nan(temp, "Feature engineering")
     return temp
