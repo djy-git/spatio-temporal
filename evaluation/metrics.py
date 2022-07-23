@@ -263,12 +263,12 @@ class CondLoss(tf.keras.losses.Loss):
         self.marked_target_value = marked_target_value
         super().__init__(**kwargs)
     def call(self, y_true, y_pred):
-        # y_true, y_pred: [B, S, D]
+        # y_true, y_pred: [B, S, F]
         assert y_true.shape == y_pred.shape, f'Shape mismatch for output and ground truth array {y_true.shape} and {y_pred.shape}'
 
-        _, S, D = y_true.shape  # Batch, Sequence, Dim of features
-        y_true = tf.reshape(y_true, (-1, D))
-        y_pred = tf.reshape(y_pred, (-1, D))
+        _, S, F = y_true.shape  # Batch, Sequence, Dim of features
+        y_true = tf.reshape(y_true, (-1, F))
+        y_pred = tf.reshape(y_pred, (-1, F))
 
         idxs_valid_mark = (y_true[:, -1] != self.marked_target_value)  # [-1]: Patv
         y_true_valid, y_pred_valid = y_true[idxs_valid_mark], y_pred[idxs_valid_mark]
