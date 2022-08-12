@@ -10,10 +10,6 @@
 > 3. 순위발표: 22. 8. 5. 17:00
 > 4. 발표 및 시상식: 22. 8. 11. 13:00 ~ 18:00
 
-**서버접속 정보**
->http://165.246.34.147:26042 \
-> pw: baidu2022
-
 # 1. [데이터](https://dacon.io/competitions/official/235926/talkboard/406431?page=1&dtype=recent)
 
 ```
