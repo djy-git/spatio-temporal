@@ -160,7 +160,7 @@ Accuracy:  55.3906%
 - Validation set을 여러 개로 사용 (Training set과 겹치는 부분 있음)
 
 
-![](assets/proposed7_validation_turbine1.png)
+![](../assets/proposed7_validation_turbine1.png)
 - `Patv=0`인 부분을 잘 다듬어야 한다.
 
 ```
@@ -182,7 +182,7 @@ Accuracy:  52.8691%
 ## Data
 - Feature engineering 추가 (proposed6 보다 개선)
 
-![](assets/proposed8_result.png)
+![](../assets/proposed8_result.png)
 
 ```
  File Name : 
@@ -203,7 +203,7 @@ Accuracy:  32.0247%
 ## Data
 - `Patv`만 사용하여 예측
 
-![](assets/proposed9_result.png)
+![](../assets/proposed9_result.png)
 
 
 ```
@@ -284,7 +284,7 @@ features = ['TurbID','Day', 'WspdY_abs', 'Itmp', 'WdirX', 'WspdX_abs', 'Patan', 
 --- Overall Score --- 349.9455314745469
 
 
-# 15. [proposed15.ipynb](proposed/proposed15.ipynb)
+# 15. [proposed15.ipynb](old/proposed/proposed15.ipynb)
 ## Data
 marking abnormals to Zero
 features = ['TurbID','Day','RPM', 'Bspd1', 'Bspd3', 'Bspd2', 'WspdX', 'Wspd', 'Wspd_cube',
@@ -292,7 +292,7 @@ features = ['TurbID','Day','RPM', 'Bspd1', 'Bspd3', 'Bspd2', 'WspdX', 'Wspd', 'W
 ## Model
 - transformer 사용
 
-![img.png](assets/proposed15_loss_plot.png)
+![img.png](../assets/proposed15_loss_plot.png)
 
 
 # 16. [proposed16.ipynb](proposed/proposed16.ipynb)
@@ -330,9 +330,9 @@ features = ['TurbID','Day','RPM', 'Bspd1', 'Bspd3', 'Bspd2', 'WspdX', 'Wspd', 'W
 - EarlyStopping(patience=10)
 - ReduceLROnPlateau(factor=0.9, patience=3)
 
-![](assets/proposed16_loss.png)
-![](assets/proposed16_train_result.png)
-![](assets/proposed16_val_result.png)
+![](../assets/proposed16_loss.png)
+![](../assets/proposed16_train_result.png)
+![](../assets/proposed16_val_result.png)
 
 ```
  File Name : 
@@ -364,8 +364,8 @@ Accuracy:  56.4644%
      --- Overall Score --- 
         349.01687309677055
     ```
-    ![](assets/proposed17_learning_curve.png) 
-    ![](assets/proposed17_training_result.png) 
+    ![](../assets/proposed17_learning_curve.png) 
+    ![](../assets/proposed17_training_result.png) 
 
 2. [proposed17-BN.ipynb](proposed/proposed17-BN.ipynb)
    - Scaling X
@@ -383,7 +383,7 @@ Accuracy:  56.4644%
         327.5388423482341
     ```
 
-4. [proposed17-MinMax.ipynb](proposed/proposed17-MinMax.ipynb) 
+4. [proposed17-MinMax.ipynb](old/proposed/proposed17-MinMax.ipynb) 
    - MinMaxScaler 사용
 
     ```
@@ -416,8 +416,8 @@ Accuracy:  56.4644%
 ## Training
 - Overfitting을 위해 validation set 사용 X
 
-![](assets/proposed18_learning_curve.png) 
-![](assets/proposed18_training_result.png) 
+![](../assets/proposed18_learning_curve.png) 
+![](../assets/proposed18_training_result.png) 
 
 ```
  File Name : 
@@ -635,10 +635,10 @@ def compile_and_fit(model, train_ds, val_ds, epochs, patience_es=10, patience_lr
                     ])
 ```
 
-![](assets/27-1.png)
-![](assets/27-2.png)
-![](assets/27-3.png)
-![](assets/27-4.png)
+![](../assets/27-1.png)
+![](../assets/27-2.png)
+![](../assets/27-3.png)
+![](../assets/27-4.png)
 
 ```
  File Name : 

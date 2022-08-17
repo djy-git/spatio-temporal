@@ -63,7 +63,7 @@ def plot_missing_value(data, dir_path=None, figsize=FIGSIZE, show_plot=SHOW_PLOT
     >>> import pandas as pd
     >>> import analysis_tools.eda as eda
     >>> data = pd.DataFrame({'a': [1, 2, 3, 4, None], 'b': [1, None, 3, 4, 5], 'c': [None, 2, 3, 4, 5]})
-    >>> eda.plot_missing_value(data, dir_path='.')
+    >>> eda.plot_missing_value(data, dir_path='')
     """
     fig, axes = plt.subplots(2, 1, figsize=figsize)
     with FigProcessor(fig, dir_path, show_plot, "Missing value"):
@@ -103,7 +103,7 @@ def plot_features(data, bins=BINS, n_cols=N_COLS,                          dir_p
     >>> import pandas as pd
     >>> import analysis_tools.eda as eda
     >>> data = pd.DataFrame({'a': [1, 2, 3, 4, 5], 'b': ['a', 'b', 'c', 'd', 'e'], 'c': [1.2, 2.3, 3.4, 4.5, 5.6]})
-    >>> eda.plot_features(data, dir_path='.')
+    >>> eda.plot_features(data, dir_path='')
     """
     n_features = len(data.columns)
     n_rows     = int(np.ceil(n_features / n_cols))
@@ -158,7 +158,7 @@ def plot_features_target(data,  target, n_cols=N_COLS,                     dir_p
     >>> cat_features = data.columns.drop(num_features)
     >>> data[num_features] = data[num_features].astype(np.float32)
     >>> data[cat_features] = data[cat_features].astype('category')
-    >>> eda.plot_features_target(data, 'a', dir_path='.')
+    >>> eda.plot_features_target(data, 'a', dir_path='')
     """
     num_features = data.select_dtypes('number').columns
     target_type  = 'num' if target in num_features else 'cat'
@@ -191,7 +191,7 @@ def plot_corr(corr,                                                        dir_p
     >>> import pandas as pd
     >>> import analysis_tools.eda as eda
     >>> data = pd.DataFrame({'a': [1, 2, 3, 1, 2], 'b': ['a', 'b', 'c', 'd', 'e'], 'c': [10, 20, 30, 10, 20]})
-    >>> eda.plot_corr(corr, dir_path='.')
+    >>> eda.plot_corr(corr, dir_path='')
     """
     fig, ax = plt.subplots(figsize=figsize)
     with FigProcessor(fig, dir_path, show_plot, "Correlation matrix"):
@@ -226,7 +226,7 @@ def plot_num_feature(data_f, bins=BINS,                           ax=None, dir_p
     >>> import pandas as pd
     >>> import analysis_tools.eda as eda
     >>> data = pd.DataFrame({'a': [1, 2, 3, 4, 5], 'b': ['a', 'b', 'c', 'd', 'e'], 'c': [1.2, 2.3, 3.4, 4.5, 5.6]})
-    >>> eda.plot_num_feature(data['a'], dir_path='.')
+    >>> eda.plot_num_feature(data['a'], dir_path='')
     """
     def plot_fn(ax):
         sns.histplot(data_f, bins=bins, ax=ax, kde=True, stat='density')
@@ -257,7 +257,7 @@ def plot_cat_feature(data_f,                                      ax=None, dir_p
     >>> import pandas as pd
     >>> import analysis_tools.eda as eda
     >>> data = pd.DataFrame({'a': [1, 2, 3, 4, 5], 'b': ['a', 'b', 'c', 'd', 'e'], 'c': [1.2, 2.3, 3.4, 4.5, 5.6]})
-    >>> eda.plot_cat_feature(data['b'], dir_path='.')
+    >>> eda.plot_cat_feature(data['b'], dir_path='')
     """
     def plot_fn(ax):
         density = data_f.value_counts(normalize=True).sort_index()
@@ -297,7 +297,7 @@ def plot_num_num_features(data, f1, f2, bins=BINS,                ax=None, dir_p
     >>> import pandas as pd
     >>> import analysis_tools.eda as eda
     >>> data = pd.DataFrame({'a': [1, 2, 3, 4, 5], 'b': ['a', 'b', 'c', 'd', 'e'], 'c': [1.2, 2.3, 3.4, 4.5, 5.6]})
-    >>> eda.plot_num_num_features(data, 'a', 'c', dir_path='.')
+    >>> eda.plot_num_num_features(data, 'a', 'c', dir_path='')
     """
     def plot_fn(ax):
         sns.histplot(x=data[f1], y=data[f2], bins=bins, ax=ax)
@@ -337,7 +337,7 @@ def plot_num_cat_features(data, f1, f2, n_classes=N_CLASSES_PLOT, ax=None, dir_p
     >>> import pandas as pd
     >>> import analysis_tools.eda as eda
     >>> data = pd.DataFrame({'a': [1, 2, 3, 4, 5], 'b': ['a', 'b', 'c', 'd', 'e'], 'c': [1.2, 2.3, 3.4, 4.5, 5.6]})
-    >>> eda.plot_num_cat_features(data, 'a', 'b', dir_path='.')
+    >>> eda.plot_num_cat_features(data, 'a', 'b', dir_path='')
     """
     def plot_fn(ax):
         selected_classes = data[f2].value_counts().index[:n_classes]
@@ -380,7 +380,7 @@ def plot_cat_num_features(data, f1, f2, n_classes=N_CLASSES_PLOT, ax=None, dir_p
     >>> import pandas as pd
     >>> import analysis_tools.eda as eda
     >>> data = pd.DataFrame({'a': [1, 2, 3, 4, 5], 'b': ['a', 'b', 'c', 'd', 'e'], 'c': [1.2, 2.3, 3.4, 4.5, 5.6]})
-    >>> eda.plot_cat_num_features(data, 'b', 'a', dir_path='.')
+    >>> eda.plot_cat_num_features(data, 'b', 'a', dir_path='')
     """
     def plot_fn(ax):
         selected_classes = data[f1].value_counts().index[:n_classes]
@@ -423,7 +423,7 @@ def plot_cat_cat_features(data, f1, f2, n_classes=N_CLASSES_PLOT, ax=None, dir_p
     >>> import pandas as pd
     >>> import analysis_tools.eda as eda
     >>> data = pd.DataFrame({'a': [1, 2, 3, 4, 5], 'b': ['a', 'b', 'c', 'd', 'e'], 'c': ['a10', 'b22', 'c11', 'a10', 'b22']})
-    >>> eda.plot_cat_cat_features(data, 'b', 'c', dir_path='.')
+    >>> eda.plot_cat_cat_features(data, 'b', 'c', dir_path='')
     """
     def plot_fn(ax):
         ratio = pd.crosstab(data[f2], data[f1], normalize='columns')

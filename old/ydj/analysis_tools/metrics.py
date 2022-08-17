@@ -45,7 +45,7 @@ def confusion_matrix_analysis(y_true, y_pred, dir_path=None, figsize=FIGSIZE, sh
     >>> from analysis_tools.metrics import confusion_matrix_analysis
     >>> y_true = [0, 0, 0, 0, 1, 1, 1, 1]
     >>> y_pred = [0, 0, 0, 1, 1, 1, 1, 1]
-    >>> confusion_matrix_analysis(y_true, y_pred, dir_path='.')
+    >>> confusion_matrix_analysis(y_true, y_pred, dir_path='')
     """
     normalized_C = confusion_matrix(y_true, y_pred, normalize='true')
     assert all(normalized_C.sum(axis=1) == 1), "Confusion matrix is not normalized"
@@ -90,7 +90,7 @@ def curve_analysis(y_true, y_score,           dir_path=None, figsize=FIGSIZE, sh
     >>> from analysis_tools.metrics import curve_analysis
     >>> y_true  = [0, 0, 0, 0, 1, 1, 1, 1]
     >>> y_score = [0.1, 0.4, 0.35, 0.8, 0.85, 0.8, 0.9, 0.95]
-    >>> curve_analysis(y_true, y_score, dir_path='.')
+    >>> curve_analysis(y_true, y_score, dir_path='')
     """
     precisions, recalls, thresholds_pr = precision_recall_curve(y_true, y_score)
     fpr, tpr, thresholds_roc           = roc_curve(y_true, y_score)
@@ -163,7 +163,7 @@ def get_feature_importance(data, target, bins=BINS, problem='classification', di
     >>> cat_features = data.columns.drop(num_features)
     >>> data[num_features] = data[num_features].astype(np.float32)
     >>> data[cat_features] = data[cat_features].astype('category')
-    >>> eda.get_feature_importance(data, 'a', dir_path='.')
+    >>> eda.get_feature_importance(data, 'a', dir_path='')
     """
     ## 1. Split data into X, y
     data               = data.dropna()
